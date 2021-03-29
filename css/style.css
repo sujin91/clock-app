@@ -1,0 +1,67 @@
+@charset "UTF-8"; 
+
+/* init */
+
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+table,
+th,
+td,
+form,
+fieldset,
+legend,
+input,
+textarea,
+button,
+article,
+aside,
+canvas,
+details,
+figcaption,
+figure,
+footer,
+header,
+menu,
+nav,
+section,
+audio,
+video,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+
+header,
+section,
+footer,
+aside,
+nav,
+main,
+article,
+figure {
+    display: block;
+}
+
+body,
+input,
+textarea,
+select,
+table,
+button,
+code {
+    font-family: Helvetica, "Apple SD Gothic Neo", sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+}
