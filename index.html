@@ -8,6 +8,41 @@
 <body>
     <div class="container">
         <h1 class="title">Clock App</h1>
+
+        <div class="tab_area">
+            <ul id="tabs" class="tab_list">
+                <li>시계</li>
+                <li>알람</li>
+                <li>스톱워치</li>
+            </ul>
+        </div>
+        <div class="clock_area">
+            <!-- <h2 class="title">시계</h2> -->
+            <strong class="clock">00:00:00</strong>
+        </div>
+
+        <div class="alarm_area">
+            <!-- <h2 class="title">알람</h2> -->
+            <form class="form_section">
+                <div class="input_area">
+                    <input type="text" class="input" maxlength="8" value="00:00:00">
+                </div>
+                <div class="button_area">
+                    <button type="button" class="button button_getTime">현재 시간</button>
+                    <button type="submit" class="button button_addAlarm">등록</button>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="watch_area">
+            <!-- <h2 class="title">스톱워치</h2> -->
+            <div class="button_area">
+                <button type="button" class="button button_reset">초기화</button>
+                <button type="button" class="button button_record">기록</button>
+            </div>
+        </div>
+
     </div>
 </body>
 <script type="module" src="js/App.js"></script>
