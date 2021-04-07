@@ -178,7 +178,6 @@ class AlarmView extends View {
 
             const $span = this.createElement('span')
             $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}`
-            // $span.contentEditable = true
 
             if(item.state === 'expired') $span.style.color = '#888'
             else if(item.state === 'active') $span.style.color = '#f00'

@@ -134,8 +134,9 @@ class Controller {
     onResetTimerWatch = () => {
         // 기록목록 전체삭제
         this.WatchModel.clear()
-        // clock 정지
+        // 시계/알람타이머 정지
         clearInterval(this.clockTimer)
+        clearInterval(this.watchTimer)
         // 00:00:00 렌더
         this.WatchView.renderReset()
         // 기록 목록 랜더
@@ -149,19 +150,15 @@ class Controller {
         //Message 존재하면 삭제
         document.querySelector('.warning')?.remove();
         document.querySelector('.success')?.remove();
-        clearInterval(this.watchTimer)
+     
     }
 
     // 스톱워치 시작
     startWatch = () => {
-        // 재시작으로 카운트 될 때 (지난 기록확인)
-        if(this.endTime > 0) {
-            this.startTime += Date.now() - this.endTime
-        } 
+        // 재시작으로 카운트 될 때 (endTime 확인)
+        if(this.endTime > 0) this.startTime += Date.now() - this.endTime
         // 처음 눌려서 카운트 될 때 
-        else { 
-            this.startTime = Date.now() 
-        }
+        else this.startTime = Date.now() 
 
         this.isStop = false;
 

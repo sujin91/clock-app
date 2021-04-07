@@ -11,7 +11,6 @@ class AlarmModel {
     add = time => {
         const inputTimeStr = time.split(':')
         const alarm = {
-            //todo이거 number안하고 id만들수잇을듯
             seconds: Number(inputTimeStr[0]) * 60 * 60 + Number(inputTimeStr[1]) * 60 + Number(inputTimeStr[2]),  
             time: {
                 date: this.getCurrentTime().date,
