@@ -41,6 +41,9 @@ class Controller {
         this.AlarmView.hide()
         this.WatchView.hide()
 
+        // 스톱워치 카운트 중에 탭이동했을 경우
+        clearInterval(this.watchTimer)
+
         if (this.selectedTab === '시계') {
             // 타이머
             this.setTimerClock()
@@ -60,10 +63,10 @@ class Controller {
             this.setTimerWatch()
             
             //스톱워치
-            this.WatchView.renderLastWatch(this.WatchModel.records)
+            this.WatchView.renderLastWatch(this.WatchModel.list())
 
             //스톱워치 기록리스트
-            this.WatchView.renderList(this.WatchModel.records)
+            this.WatchView.renderList(this.WatchModel.list())
         }
     }
 
@@ -150,7 +153,6 @@ class Controller {
         //Message 존재하면 삭제
         document.querySelector('.warning')?.remove();
         document.querySelector('.success')?.remove();
-     
     }
 
     // 스톱워치 시작
@@ -178,13 +180,9 @@ class Controller {
     // 기록 버튼 처리
     onAddRecord = (time) => {
         // 초기화 안됐을 때
-        if (!this.isInit) {
-            this.WatchView.warningMessage(document.querySelector('.button_record'), '초기화 해주세요.')
-        }
+        if (!this.isInit) this.WatchView.warningMessage(document.querySelector('.button_record'), '초기화 해주세요.')
         // 기록 시작할 때 (카운트 돔) 
-        else if (this.isInit && this.isStop){
-            this.startWatch()
-        } 
+        else if (this.isInit && this.isStop) this.startWatch() 
         // 스탑워치 멈출 때 (카운트 멈춤)
         else {
             this.stopWatch()

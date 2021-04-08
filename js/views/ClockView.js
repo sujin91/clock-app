@@ -13,12 +13,12 @@ class ClockView extends View {
         const currentDate = new Date() //현재 시간
     
         const currentTime = {
-            hour: currentDate.getHours(),
-            min: currentDate.getMinutes(),
-            sec: currentDate.getSeconds()
+            hour: String(currentDate.getHours()).padStart(2, "0"),
+            min: String(currentDate.getMinutes()).padStart(2, "0"),
+            sec: String(currentDate.getSeconds()).padStart(2, "0")
         }
         
-        this.$clock.innerHTML = `${currentTime.hour < 10 ? `0${currentTime.hour}` : currentTime.hour}:${currentTime.min < 10 ? `0${currentTime.min}` : currentTime.min}:${currentTime.sec < 10 ? `0${currentTime.sec}` : currentTime.sec}`
+        this.$clock.innerHTML = `${currentTime.hour}:${currentTime.min}:${currentTime.sec}`
     }
 }
 

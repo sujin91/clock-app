@@ -1,7 +1,7 @@
 class AlarmModel {
     constructor() {
         this.myStorage = window.localStorage;
-        this.alarms = JSON.parse(localStorage.getItem('alarms')) || []
+        this.alarms = JSON.parse(localStorage.getItem('alarms')) ?? []
     }
 
     // 리스트 가져오기

@@ -16,17 +16,15 @@ class TabView extends View {
     }
 
     setActiveTab = tabName => {
-        Array.from(this.$tab).forEach (li => {
+        for(const li of this.$tab) {
             li.className = li.innerHTML === tabName ?  'active' : ''
-        })
+        }
     }
 
     bindClick = () => {
-        Array.from(this.$tab).forEach (li => {
-            li.addEventListener('click', e => {
-                this.onClick(li.innerHTML)
-            })
-        })
+        for(const li of this.$tab) {
+            li.addEventListener('click', e => this.onClick(li.innerHTML))
+        }
     }
 
     onClick = tabName => {

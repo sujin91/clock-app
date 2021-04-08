@@ -12,3 +12,8 @@
 ## TODO
 - [ ] handle로 이름바꿀까
 - [ ] es6 함수 활용할게있나..찾기
+  - [v] some
+  - [v] for .. of
+  - [v] Nullish 
+  - [v] optional chaining
+  - [v] padStart 

@@ -159,9 +159,10 @@ class AlarmView extends View {
     // 폼요소에 현재시각 렌더
     renderTime = () => {
         const currentTime = this.getCurrentTime()
-        const hour = currentTime.hour < 10 ? `0${currentTime.hour}` : currentTime.hour
-        const min = currentTime.min < 10 ? `0${currentTime.min}` : currentTime.min
-        const sec = currentTime.sec < 10 ? `0${currentTime.sec}` : currentTime.sec
+        //문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
+        const hour = String(currentTime.hour).padStart(2, "0") 
+        const min = String(currentTime.min).padStart(2, "0")
+        const sec = String(currentTime.sec).padStart(2, "0")
 
         this.$inputEl.value = `${hour}:${min}:${sec}`
     }

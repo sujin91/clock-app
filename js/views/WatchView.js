@@ -44,10 +44,10 @@ class WatchView extends View {
 
     // 스톱워치 시계 렌더
     renderStopWatch = ( watchTime ) => {
-        this.hour = Math.floor(watchTime / 1000 / 60 / 60) % 60 < 10 ? `0${Math.floor(watchTime / 1000 / 60 / 60) % 60}` : Math.floor(watchTime / 1000 / 60 / 60) % 60
-        this.min = Math.floor(watchTime / 1000 / 60) % 60 < 10 ? `0${Math.floor(watchTime / 1000 / 60 ) % 60}` : Math.floor(watchTime / 60000) % 60
-        this.sec = Math.floor(watchTime / 1000) % 60 < 10 ? `0${Math.floor(watchTime / 1000) % 60}` : Math.floor(watchTime / 1000) % 60
-        this.msec = Math.floor(watchTime) % 1000 
+        this.hour = String(Math.floor(watchTime / 1000 / 60 / 60) % 60).padStart(2, "0")
+        this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(2, "0")
+        this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
+        this.msec = String(Math.floor(watchTime) % 1000).padStart(3, "0")
         
         this.$clock.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
     }
