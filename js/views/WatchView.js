@@ -1,4 +1,5 @@
 import View from './View.js'
+import Observable from '../utils/Observable.js';
 
 class WatchView extends View {
     constructor($target) {
@@ -40,7 +41,10 @@ class WatchView extends View {
     }
 
     //삭제
-    onDeleteRecord = e => this.emit('@delete', {id: Number(e.toElement.parentNode.id)}) 
+    onDeleteRecord = e => {
+        this.emit('@delete', {id: Number(e.toElement.parentNode.id)}) 
+        // this.register
+    }
 
     // 스톱워치 시계 렌더
     renderStopWatch = ( watchTime ) => {
@@ -59,6 +63,10 @@ class WatchView extends View {
             let lastRecord = records[records.length - 1]
             this.$clock.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
         } 
+        else {
+            // 00:00:00 렌더
+            this.renderReset()
+        }
     }
 
     // 스톱워치 기록 목록 렌더

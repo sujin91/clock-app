@@ -29,10 +29,4 @@ export default class View {
     
         return element
     }
-
-    // 선택
-    querySelector = () => {
-
-    }
-
 }

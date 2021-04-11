@@ -7,5 +7,3 @@ export function MessageView ($target, className, text) {
     $target.querySelector(`.button_area .${className}`)?.remove();
     $target.querySelector(`.button_area`).append($message)
 }
-
-// export default MessageView

@@ -18,7 +18,7 @@ class AlarmModel extends ClockModel {
         const alarm = {
             seconds: Number(inputTimeStr[0]) * 60 * 60 + Number(inputTimeStr[1]) * 60 + Number(inputTimeStr[2]),  
             time: {
-                date: this.getCurrentTime().date,
+                date: this.getClock().date,
                 hour: inputTimeStr[0],
                 min: inputTimeStr[1],
                 sec: inputTimeStr[2],
@@ -33,23 +33,8 @@ class AlarmModel extends ClockModel {
         this._commit(this.alarms)
     }
 
-    // 현재 시간 가져오기
-    getCurrentTime = () => {
-        const currentDate = new Date() 
-        const currentTime = {
-            date: currentDate.getDate(),
-            hour: currentDate.getHours(),
-            min: currentDate.getMinutes(),
-            sec: currentDate.getSeconds()
-        }
-    
-        return currentTime
-    }
-
     // '초'에 따른 State 변화
     changeState = () => {
-        // const currentTime = this.getCurrentTime()
-        // debugger
         const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
 
@@ -65,15 +50,12 @@ class AlarmModel extends ClockModel {
     }
 
     isError = (inputTime) => {
-        // 초로 변환
-        // const currentTime = this.getCurrentTime()
         const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
         const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
         
          // 빈자리 있는지 확인
          const isEmpty = inputTime.length < 8 ? true : false;
-
          // 과거 시간인지 확인
          const isPast = inputSeconds - currentSeconds < 0 ? true : false;
  
@@ -103,6 +85,19 @@ class AlarmModel extends ClockModel {
 
     _commit = alarms => {
         Storage.set('alarms', this.alarms)
+    }
+
+    setTimer() {
+        this.timer = setInterval(() => {
+            // this.setClock()
+            this.changeState()
+            this.notify('@ALARM', this.alarms)
+        }, 1000)
+    }
+
+    clearTimer() {
+        clearInterval(this.timer)
+        return false
     }
 }
 

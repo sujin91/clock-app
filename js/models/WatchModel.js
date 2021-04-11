@@ -1,7 +1,9 @@
+import Observable from '../utils/Observable.js'
 import {Storage} from '../utils/Storage.js'
 
-class WatchModel {
+class WatchModel extends Observable{
     constructor() {
+        super()
         this.records = []
     }
 
@@ -39,6 +41,37 @@ class WatchModel {
 
     _commit = records => {
         Storage.set('records', this.records)
+    }
+
+    // 스톱워치 시작
+    startWatch = () => {
+        // 재시작으로 카운트 될 때 (endTime 확인)
+        if(this.endTime > 0) this.startTime += Date.now() - this.endTime
+        // 처음 눌려서 카운트 될 때 
+        else {
+            this.startTime = Date.now() 
+        }
+
+        this.setTimer()
+    }
+
+    setTimer() {
+        this.watchTimer = setInterval( () => {
+            this.watchTime = Date.now() - this.startTime
+            this.notify('@WATCH', this.watchTime)
+        }, 1)
+    }
+
+    // 스톱워치 멈춤 (일시정지 상태)
+    stopWatch = () => {
+        clearInterval(this.watchTimer)
+        this.endTime = Date.now()
+    }
+
+    // 초기화 버튼 (기록중에)
+    clearWatch = () => {
+        clearInterval(this.watchTimer)
+        this.endTime = 0
     }
 }
 
