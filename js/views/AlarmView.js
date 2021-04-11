@@ -1,4 +1,4 @@
-import { Code } from '../constants.js'
+import { Code, Message } from '../constants.js'
 import { MessageView } from './MessageView.js'
 
 import View from './View.js'
@@ -19,18 +19,6 @@ class AlarmView extends View {
         this.$element.append(this.$alarmList, this.$alarmCount)
 
         this.bindEvents()
-    }
-    
-    //현재 시간
-    getCurrentTime = () => {
-        const currentDate = new Date() 
-        const currentTime = {
-            date: currentDate.getDate(),
-            hour: currentDate.getHours(),
-            min: currentDate.getMinutes(),
-            sec: currentDate.getSeconds()
-        }
-        return currentTime
     }
 
     // 알람폼에 있는 시간
@@ -67,7 +55,7 @@ class AlarmView extends View {
         const inputTime = this.getInputTime()
 
         if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
-            Message(this.$buttonAddAlarm, 'warning', '24시/60분/60초를 넘길 수 없습니다')
+            MessageView('warning', Message.FORMAT)
             this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);
         }
 
@@ -125,8 +113,7 @@ class AlarmView extends View {
     onClickDeleteAlarm = e => this.emit('@delete', {id: e.toElement.parentNode.id})
 
     // 폼요소에 현재시각 렌더
-    renderTime = () => {
-        const currentTime = this.getCurrentTime()
+    renderTime = currentTime => {
         //문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
         const hour = String(currentTime.hour).padStart(2, "0") 
         const min = String(currentTime.min).padStart(2, "0")

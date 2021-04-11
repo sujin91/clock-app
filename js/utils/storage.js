@@ -1,6 +1,6 @@
 export const NAMESPACE = 'clock-app_'
 
-export const storage = {
+export const Storage = {
     get: key => {
         try { //용량, 권한 체크
             const data = JSON.parse(localStorage.getItem(`${NAMESPACE}${key}`)) || []

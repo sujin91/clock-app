@@ -1,9 +1,12 @@
-import {storage} from '../utils/storage.js'
+import { Message, State } from '../constants.js'
+import { Storage } from '../utils/Storage.js'
 import { MessageView } from '../views/MessageView.js'
+import ClockModel from './ClockModel.js'
 
-class AlarmModel {
+class AlarmModel extends ClockModel {
     constructor() {
-        this.alarms = storage.get('alarms')
+        super()
+        this.alarms = Storage.get('alarms')
     }
 
     // 리스트 가져오기
@@ -20,7 +23,7 @@ class AlarmModel {
                 min: inputTimeStr[1],
                 sec: inputTimeStr[2],
             },
-            state: 'pending',
+            state: State.PENDING,
         }
 
         this.alarms.push(alarm)
@@ -45,13 +48,15 @@ class AlarmModel {
 
     // '초'에 따른 State 변화
     changeState = () => {
-        const currentTime = this.getCurrentTime()
+        // const currentTime = this.getCurrentTime()
+        // debugger
+        const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
 
         this.alarms.forEach( item => {
             // 알람 state Change
-            if(item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = 'active'
-            else if(item.seconds - currentSeconds < 0 ) item.state = 'expired'
+            if(item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = State.ACTIVE
+            else if(item.seconds - currentSeconds < 0 ) item.state = State.EXPIRED
 
             // 자정 Change
             if(item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
@@ -61,7 +66,8 @@ class AlarmModel {
 
     isError = (inputTime) => {
         // 초로 변환
-        const currentTime = this.getCurrentTime()
+        // const currentTime = this.getCurrentTime()
+        const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
         const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
         
@@ -76,13 +82,13 @@ class AlarmModel {
  
          // MessageView
          if(isEmpty) {
-             MessageView(this.$buttonAddAlarm, 'warning', '시간 형식에 맞게 입력해주세요.')
+             MessageView(document.querySelector('.alarm_area'), 'warning', Message.EMPTY)
          }
          else if(isExist) {
-             MessageView(this.$buttonAddAlarm, 'warning', '이미 존재하는 알람입니다.')
+             MessageView(document.querySelector('.alarm_area'), 'warning', Message.EXIST)
          }
          else {
-             isPast && MessageView(this.$buttonAddAlarm, 'warning', '과거시간은 알람을 등록할 수 없습니다.')
+             isPast && MessageView(document.querySelector('.alarm_area'), 'warning', Message.PAST)
          }
          
          // 둘중 하나라도 유효하지 않으면 isError는 TRUE
@@ -96,7 +102,7 @@ class AlarmModel {
     }
 
     _commit = alarms => {
-        storage.set('alarms', this.alarms)
+        Storage.set('alarms', this.alarms)
     }
 }
 

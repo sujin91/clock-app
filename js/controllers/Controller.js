@@ -1,9 +1,9 @@
 import { TabNames } from '../constants.js'
 
+import ClockModel from '../models/ClockModel.js'
 import AlarmModel from '../models/AlarmModel.js'
 import WatchModel from '../models/WatchModel.js'
 
-import View from '../views/View.js'
 import TabView from '../views/TabView.js'
 import AlarmView from '../views/AlarmView.js'
 import ClockView from '../views/ClockView.js'
@@ -12,8 +12,11 @@ import WatchView from '../views/WatchView.js'
 import { MessageView } from '../views/MessageView.js'
 import { Message } from '../constants.js'
 
+import Timer from '../utils/Timer.js'
+
 class Controller {
     constructor() {
+        this.ClockModel = new ClockModel()
         this.AlarmModel = new AlarmModel()
         this.WatchModel = new WatchModel()
 
@@ -22,6 +25,7 @@ class Controller {
         this.ClockView = new ClockView(document.querySelector('.clock_area'))
         this.WatchView = new WatchView(document.querySelector('.watch_area'))
         
+        // this.timer = new Timer()
         // 탭
         this.TabView
         .on('@change', e => this.onChangeTab(e.detail.tabName))
@@ -39,7 +43,7 @@ class Controller {
         .on('@delete', e => this.onDeleteRecord(e.detail.id))
 
         // 처음 화면 렌더링
-        this.selectedTab = '시계'
+        this.selectedTab = TabNames.CLOCK
         this.renderView()        
     }
 
@@ -56,13 +60,16 @@ class Controller {
         clearInterval(this.watchTimer)
 
         if (this.selectedTab === TabNames.CLOCK) {
-            // 타이머
-            this.setTimerClock()
+            //todo observer
+            this.clockTimer = setInterval( () => {
+                this.ClockView.render(this.ClockModel.getClock())
+            }, 1000);
+            
         } else if (this.selectedTab === TabNames.ALARM) {
             this.AlarmView.show()
 
             // 타이머
-            this.setTimerClock()
+            // this.setTimerClock()
             this.setTimerAlarm()
 
             // 알람리스트
@@ -119,7 +126,7 @@ class Controller {
     /* 알람 */
     // 현재시간 버튼 처리
     onGetTime = () => {
-        this.AlarmView.renderTime()
+        this.AlarmView.renderTime(this.ClockModel.getClock())
     }
 
     // 등록 버튼 처리
@@ -131,7 +138,7 @@ class Controller {
         if(!this.AlarmModel.isError(this.AlarmView.getInputTime())) {
             this.AlarmModel.add(time)
             this.AlarmView.renderList(this.AlarmModel.list())
-            MessageView(document.querySelector('.button_addAlarm'), 'success', Message.SUCCESS)
+            MessageView(document.querySelector('.alarm_area'), 'success', Message.SUCCESS)
         }
     }
 
@@ -188,8 +195,9 @@ class Controller {
 
     // 기록 버튼 처리
     onAddRecord = (time) => {
+        // debugger
         // 초기화 안됐을 때
-        if (!this.isInit) MessageView(document.querySelector('.button_record'), 'warning', Message.INIT)
+        if (!this.isInit) MessageView(document.querySelector('.watch_area'), 'warning', Message.INIT)
         // 기록 시작할 때 (카운트 돔) 
         else if (this.isInit && this.isStop) this.startWatch() 
         // 스탑워치 멈출 때 (카운트 멈춤)
@@ -197,7 +205,7 @@ class Controller {
             this.stopWatch()
             this.WatchModel.add(time)
             this.WatchView.renderList(this.WatchModel.list())
-            MessageView(document.querySelector('.button_record'), 'success', Message.SUCCESS)
+            MessageView(document.querySelector('.watch_area'), 'success', Message.SUCCESS)
         }
     }
 

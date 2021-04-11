@@ -1,4 +1,5 @@
 import View from './View.js'
+import Timer from '../utils/Timer.js'
 
 // 시계탭
 class ClockView extends View {
@@ -9,16 +10,21 @@ class ClockView extends View {
     }
 
     // 시계 렌더
-    render = () => {
-        const currentDate = new Date() //현재 시간
-    
-        const currentTime = {
-            hour: String(currentDate.getHours()).padStart(2, "0"),
-            min: String(currentDate.getMinutes()).padStart(2, "0"),
-            sec: String(currentDate.getSeconds()).padStart(2, "0")
-        }
-        
-        this.$clock.innerHTML = `${currentTime.hour}:${currentTime.min}:${currentTime.sec}`
+    render = (clock) => {
+        const hour = String(clock.hour).padStart(2, "0") 
+        const min = String(clock.min).padStart(2, "0")
+        const sec = String(clock.sec).padStart(2, "0")
+
+        // debugger
+        this.$clock.innerHTML = `${hour}:${min}:${sec}`
+        // debugger
+    }
+
+    reRender = (clock) => {
+        // todo observer
+        // this.timer = new Timer()
+        console.log('rerender')
+        this.$clock.innerHTML = `${clock.hour}:${clock.min}:${clock.sec}`
     }
 }
 

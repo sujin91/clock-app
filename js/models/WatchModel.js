@@ -1,4 +1,4 @@
-import {storage} from '../utils/storage.js'
+import {Storage} from '../utils/Storage.js'
 
 class WatchModel {
     constructor() {
@@ -38,7 +38,7 @@ class WatchModel {
     }
 
     _commit = records => {
-        storage.set('records', this.records)
+        Storage.set('records', this.records)
     }
 }
 
