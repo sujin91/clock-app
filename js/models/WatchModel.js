@@ -1,7 +1,7 @@
+import {storage} from '../utils/storage.js'
+
 class WatchModel {
     constructor() {
-        this.myStorage = window.localStorage;
-        // 생성될 때 기록 초기화
         this.records = []
     }
 
@@ -38,7 +38,7 @@ class WatchModel {
     }
 
     _commit = records => {
-        this.myStorage.setItem('records', JSON.stringify(this.records))
+        storage.set('records', this.records)
     }
 }
 

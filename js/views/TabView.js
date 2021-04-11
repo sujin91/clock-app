@@ -6,16 +6,10 @@ class TabView extends View {
         this.$element = $target
         this.$tab = this.$element.querySelectorAll('.tab_list li')
 
-        this.tabNames = {
-            clock: '시계',
-            alarm: '알람',
-            stopwatch: '스톱워치',
-        }
-
         this.bindClick()
     }
 
-    setActiveTab = tabName => {
+     setActiveTab ( tabName ) {
         for(const li of this.$tab) {
             li.className = li.innerHTML === tabName ?  'active' : ''
         }
@@ -27,7 +21,7 @@ class TabView extends View {
         }
     }
 
-    onClick = tabName => {
+    onClick (tabName) {
         this.setActiveTab(tabName)
         this.emit('@change', { tabName })
     }

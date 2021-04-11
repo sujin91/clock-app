@@ -1,7 +1,8 @@
+import {storage} from '../utils/storage.js'
+
 class AlarmModel {
     constructor() {
-        this.myStorage = window.localStorage;
-        this.alarms = JSON.parse(localStorage.getItem('alarms')) ?? []
+        this.alarms = storage.get('alarms')
     }
 
     // 리스트 가져오기
@@ -64,7 +65,7 @@ class AlarmModel {
     }
 
     _commit = alarms => {
-        this.myStorage.setItem('alarms', JSON.stringify(this.alarms))
+        storage.set('alarms', this.alarms)
     }
 }
 

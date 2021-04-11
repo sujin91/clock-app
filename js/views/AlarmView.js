@@ -1,3 +1,6 @@
+import { Code } from '../constants.js'
+import { MessageView } from './MessageView.js'
+
 import View from './View.js'
 
 // 알람 탭
@@ -60,13 +63,13 @@ class AlarmView extends View {
 
         // View에서 상속받은 공통 알림 메시지 메서드
         if(isEmpty) {
-            this.warningMessage(this.$buttonAddAlarm, '시간 형식에 맞게 입력해주세요.')
+            Message(this.$buttonAddAlarm, 'warning', '시간 형식에 맞게 입력해주세요.')
         }
         else if(isExist) {
-            this.warningMessage(this.$buttonAddAlarm, '이미 존재하는 알람입니다.')
+            Message(this.$buttonAddAlarm, 'warning', '이미 존재하는 알람입니다.')
         }
         else {
-            isPast && this.warningMessage(this.$buttonAddAlarm, '과거시간은 알람을 등록할 수 없습니다.')
+            isPast && Message(this.$buttonAddAlarm, 'warning', '과거시간은 알람을 등록할 수 없습니다.')
         }
         
         // 둘중 하나라도 유효하지 않으면 isError는 TRUE
@@ -95,7 +98,7 @@ class AlarmView extends View {
         const inputTime = this.getInputTime()
 
         if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
-            this.warningMessage(this.$buttonAddAlarm, '24시/60분/60초를 넘길 수 없습니다')
+            Message(this.$buttonAddAlarm, 'warning', '24시/60분/60초를 넘길 수 없습니다')
             this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);
         }
 
@@ -123,10 +126,6 @@ class AlarmView extends View {
     }
     
     onKeyDown = (e) => {
-        const enter = 13
-        const backspace = 8
-        const shift = 186
-
         // 숫자&&명령어만 사용 가능
         this.filterNumber(e)
         
@@ -136,7 +135,7 @@ class AlarmView extends View {
         }
 
         // 콜론지울 때 처리
-        if(e.keyCode === 8 && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
+        if(e.keyCode === Code.BACKSPACE && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
             this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);    
         }
     }
