@@ -117,9 +117,6 @@ class Controller {
     }
 
     /* 알람 */
-    // isErrorAlarm = () => this.AlarmView.isError(this.AlarmModel.list())
-    isErrorAlarm = () => this.AlarmModel.isError()
-
     // 현재시간 버튼 처리
     onGetTime = () => {
         this.AlarmView.renderTime()
@@ -131,14 +128,7 @@ class Controller {
         document.querySelector('.warning')?.remove();
         document.querySelector('.success')?.remove();
 
-        // if(!this.isErrorAlarm()) {
-        //     this.AlarmModel.add(time)
-        //     this.AlarmView.renderList(this.AlarmModel.list())
-        //     MessageView(document.querySelector('.button_addAlarm'), 'success', Message.SUCCESS)
-        // }
-
-        if(!this.AlarmModel.isError()) {
-            debugger
+        if(!this.AlarmModel.isError(this.AlarmView.getInputTime())) {
             this.AlarmModel.add(time)
             this.AlarmView.renderList(this.AlarmModel.list())
             MessageView(document.querySelector('.button_addAlarm'), 'success', Message.SUCCESS)

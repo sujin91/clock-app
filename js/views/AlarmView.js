@@ -37,43 +37,12 @@ class AlarmView extends View {
     getInputTime = () => {
         const TimeStr = this.$inputEl.value.split(':')
         const inputTime = {
+            length: this.$inputEl.value.length,
             hour: TimeStr[0],
             min: TimeStr[1],
             sec: TimeStr[2]
         }
         return inputTime
-    }
-
-    isError = (alarms) => {
-        const currentTime = this.getCurrentTime()
-        const inputTime = this.getInputTime()
-
-        // 초로 변환
-        const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
-        const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
-        
-        // 빈자리 있는지 확인
-        const isEmpty = this.$inputEl.value.length < 8 ? true : false;
-
-        // 과거 시간인지 확인
-        const isPast = inputSeconds - currentSeconds < 0 ? true : false;
-
-        // 존재하는 알람인지 확인
-        const isExist = alarms.some( item => item.seconds === inputSeconds )
-
-        // View에서 상속받은 공통 알림 메시지 메서드
-        if(isEmpty) {
-            Message(this.$buttonAddAlarm, 'warning', '시간 형식에 맞게 입력해주세요.')
-        }
-        else if(isExist) {
-            Message(this.$buttonAddAlarm, 'warning', '이미 존재하는 알람입니다.')
-        }
-        else {
-            isPast && Message(this.$buttonAddAlarm, 'warning', '과거시간은 알람을 등록할 수 없습니다.')
-        }
-        
-        // 둘중 하나라도 유효하지 않으면 isError는 TRUE
-        return isExist || isPast || isEmpty
     }
 
     bindEvents = () => {

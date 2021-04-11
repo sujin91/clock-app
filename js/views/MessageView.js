@@ -4,6 +4,6 @@ export const MessageView = ($element, className, text) => {
     $message.className = className
 
     //warning 존재하면 삭제
-    $element.parentNode.querySelector(`.${className}`)?.remove();
-    $element.parentNode.append($message)
+    document.querySelector(`.form_section .${className}`)?.remove();
+    document.querySelector(`.form_section`).append($message)
 }
