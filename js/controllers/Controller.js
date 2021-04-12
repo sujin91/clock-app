@@ -89,6 +89,7 @@ class Controller extends Observable {
             this.ClockView.render(this.ClockModel.getClock())
             this.AlarmView.renderList(this.AlarmModel.list())
             this.AlarmView.show()
+            this.ClockView.show()
             this.WatchView.hide()
 
             if(this.ClockFlag === false) {
@@ -99,7 +100,7 @@ class Controller extends Observable {
                 this.AlarmModel.setTimer()
                 this.AlarmFlag = true
             }
-        } else  { //if (this.selectedTab === TabNames.STOPWATCH)
+        } else  { 
             this.AlarmView.hide()
             this.WatchView.show()
             this.AlarmFlag = this.AlarmModel.clearTimer()
@@ -107,8 +108,9 @@ class Controller extends Observable {
             // 스톱워치 기록이 있으면 시계 Timer는 제거
             // 초기화 눌렀으면.. 스탑워치 뷰로 계속나오는게 날듯
             if(this.WatchModel.records.length > 0 || this.isInit === true) {
-                this.ClockFlag = this.ClockModel.clearTimer()
+                this.ClockView.hide()
                 this.WatchView.renderLastWatch(this.WatchModel.list())
+                this.ClockFlag = this.ClockModel.clearTimer()
             }
         }
     }
@@ -149,6 +151,7 @@ class Controller extends Observable {
         
         // 00:00:00 렌더
         this.WatchView.renderReset()
+        this.ClockView.hide()
         // 기록 목록 랜더
         this.WatchView.renderList(this.WatchModel.list())
         // 초기화 되었다는 플래그

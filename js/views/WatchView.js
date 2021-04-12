@@ -5,20 +5,20 @@ class WatchView extends View {
     constructor($target) {
         super();
         this.$element = $target
-        this.$clock = document.querySelector('.clock')
+        this.$watch = this.$element.querySelector('.watch')
         this.$buttonReset = this.$element.querySelector('.button_reset')
         this.$buttonRecord = this.$element.querySelector('.button_record')
         this.$recordCount = this.createElement('strong', 'count')
         this.$recordList = this.createElement('ul', 'list')
         this.$element.append(this.$recordList, this.$recordCount)
-        this.$element.style.display = 'none'
-
+        this.$watch.style.setProperty('display', 'none')
         this.bindEvents()
     }
 
     // 00:00:00 초기화 렌더
     renderReset() {
-        this.$clock.innerHTML = `00:00:00`
+        this.$watch.style.setProperty('display', 'block')
+        this.$watch.innerHTML = `00:00:00`
     }
 
     bindEvents() {
@@ -39,13 +39,12 @@ class WatchView extends View {
 
     //기록
     onAddRecord() {
-        this.emit('@click', {time: this.$clock.innerHTML})
+        this.emit('@click', { time: this.$watch.innerHTML })
     }
 
     //삭제
     onDeleteRecord(e) {
-        this.emit('@delete', {id: Number(e.toElement.parentNode.id)}) 
-        // this.register
+        this.emit('@delete', { id: Number(e.toElement.parentNode.id) }) 
     }
 
     // 스톱워치 시계 렌더
@@ -55,7 +54,7 @@ class WatchView extends View {
         this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
         this.msec = String(Math.floor(watchTime) % 1000).padStart(3, "0")
         
-        this.$clock.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
+        this.$watch.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
     }
 
     // 탭이동으로 인한 스톱워치 마지막 기록값 렌더
@@ -63,7 +62,7 @@ class WatchView extends View {
         // 기록이 있으면
         if(records.length > 0) {
             let lastRecord = records[records.length - 1]
-            this.$clock.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
+            this.$watch.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
         } 
         else {
             // 00:00:00 렌더
