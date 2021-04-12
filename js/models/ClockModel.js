@@ -21,6 +21,10 @@ class ClockModel extends Observable {
         return this.clock
     }
 
+    getSeconds(hour, min, sec) {
+        return Number(hour) * 60 * 60 + Number(min) * 60 + Number(sec)
+    }
+
     setTimer() {
         this.timer = setInterval(() => {
             this.setClock()

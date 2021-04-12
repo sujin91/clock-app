@@ -23,12 +23,12 @@ class AlarmView extends View {
 
     // 알람폼에 있는 시간
     getInputTime() {
-        const TimeStr = this.$inputEl.value.split(':')
+        const [hour, min, sec] = this.$inputEl.value.split(':')
         const inputTime = {
             length: this.$inputEl.value.length,
-            hour: TimeStr[0],
-            min: TimeStr[1],
-            sec: TimeStr[2]
+            hour: hour,
+            min: min,
+            sec: sec
         }
 
         return inputTime

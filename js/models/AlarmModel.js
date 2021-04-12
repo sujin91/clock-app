@@ -18,7 +18,7 @@ class AlarmModel extends ClockModel {
     add(time) {
         const [hour, min, sec] = time.split(':')
         const alarm = {
-            seconds: Number(hour) * 60 * 60 + Number(min) * 60 + Number(sec),  
+            seconds: this.getSeconds(hour, min, sec),
             time: {
                 date: this.getClock().date,
                 hour: hour,
@@ -38,7 +38,7 @@ class AlarmModel extends ClockModel {
     // '초'에 따른 State 변화
     changeState() {
         const currentTime = this.getClock()
-        const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
+        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
 
         this.alarms.forEach( item => {
             // 알람 state Change
@@ -53,8 +53,8 @@ class AlarmModel extends ClockModel {
 
     isError(inputTime) {
         const currentTime = this.getClock()
-        const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
-        const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
+        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
+        const inputSeconds = this.getSeconds(inputTime.hour, inputTime.min, inputTime.sec)
         
         // 빈자리 있는지 확인
         const isEmpty = inputTime.length < 8;
