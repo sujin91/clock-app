@@ -6,7 +6,8 @@ export const TabNames = {
     STOPWATCH: '스톱워치',
 }
 
-export const Code = {
+export const Key = {
+    // Backspace
     ENTER: 13,
     BACKSPACE: 8,
     SHIFT: 186,

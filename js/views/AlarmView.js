@@ -1,4 +1,4 @@
-import { Code, Message } from '../constants.js'
+import { Message } from '../constants.js'
 import { MessageView } from './MessageView.js'
 
 import View from './View.js'
@@ -55,30 +55,31 @@ class AlarmView extends View {
         const inputTime = this.getInputTime()
 
         if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
-            MessageView('warning', Message.FORMAT)
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.FORMAT)
             this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);
         }
 
-        e.keyCode === 13 && this.emit('@submit', {input: this.$inputEl.value})
+        e.key === 'Enter' && this.emit('@submit', {input: this.$inputEl.value})
     }
 
     // 숫자, 주요키만 사용 가능
     filterNumber = e => {
-        if (e.keyCode > 47 && e.keyCode < 58) {
+        if (Number(e.key) >= 0 && Number(e.key) < 10) {
             this.isDeleteMode = false
             return
         }
         if (e.ctrlKey || e.altKey || e.metaKey) {
             return 
         }
-        if (e.keyCode === 9 || e.keyCode === 36 || e.keyCode === 35 || e.keyCode === 37 ||
-            e.keyCode === 39 || e.keyCode === 46) {
+        if (e.key === 'Tab' || e.key === 'Home' || e.key === 'End' || e.key === 'ArrowLeft' ||
+            e.key === 'ArrowRight' || e.key === 'Delete') {
             return
         }
-        if ( e.keyCode === 8 ) {
+        if ( e.key === 'Backspace' ) {
             this.isDeleteMode = true
             return
         }
+        
         e.preventDefault();
     }
     
@@ -92,7 +93,7 @@ class AlarmView extends View {
         }
 
         // 콜론지울 때 처리
-        if(e.keyCode === Code.BACKSPACE && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
+        if(e.key === 'Backspace' && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
             this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);    
         }
     }
