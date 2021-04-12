@@ -1,5 +1,5 @@
 import Observable from '../utils/Observable.js'
-import {Storage} from '../utils/Storage.js'
+import { Storage } from '../utils/Storage.js'
 
 class WatchModel extends Observable{
     constructor() {
@@ -42,7 +42,7 @@ class WatchModel extends Observable{
     }
 
     _commit(records) {
-        Storage.set('records', this.records)
+        Storage.set('records', records)
     }
 
     // 스톱워치 시작

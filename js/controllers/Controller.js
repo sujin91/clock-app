@@ -127,7 +127,11 @@ class Controller extends Observable {
         document.querySelector('.warning')?.remove()
         document.querySelector('.success')?.remove()
 
-        if(!this.AlarmModel.isError(this.AlarmView.getInputTime())) {
+        const isErrorText = this.AlarmModel.isError(time)
+
+        if(isErrorText) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', isErrorText)
+        } else {
             this.AlarmModel.add(time)
             this.AlarmView.renderList(this.AlarmModel.list())
             MessageView(document.querySelector('.alarm_area'), 'success', Message.SUCCESS)

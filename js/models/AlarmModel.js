@@ -1,6 +1,5 @@
 import { Message, State } from '../constants.js'
 import { Storage } from '../utils/Storage.js'
-import { MessageView } from '../views/MessageView.js'
 import ClockModel from './ClockModel.js'
 
 class AlarmModel extends ClockModel {
@@ -52,34 +51,24 @@ class AlarmModel extends ClockModel {
     }
 
     isError(inputTime) {
+        const [hour, min, sec] = inputTime.split(':')
+
         const currentTime = this.getClock()
         const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
-        const inputSeconds = this.getSeconds(inputTime.hour, inputTime.min, inputTime.sec)
-        
+        const inputSeconds = this.getSeconds(hour, min, sec)
+
         // 빈자리 있는지 확인
-        const isEmpty = inputTime.length < 8
+        if(inputTime.length < 8) {
+            return Message.EMPTY
+        }
         // 과거 시간인지 확인
-        const isPast = inputSeconds - currentSeconds < 0
+        if(inputSeconds - currentSeconds < 0) {
+            return Message.EXIST
+        }
         // 존재하는 알람인지 확인
-        const isExist = this.alarms.some( item => item.seconds === inputSeconds )
-
-        // MessageView
-        if(isEmpty) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.EMPTY)
-
-            return true
+        if(this.alarms.some( item => item.seconds === inputSeconds )) {
+            return Message.PAST
         }
-        if(isExist) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.EXIST)
-
-            return true
-        }
-        if(isPast) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.PAST)
-
-            return true
-        }
-         
         return false
     }
 
@@ -90,7 +79,7 @@ class AlarmModel extends ClockModel {
     }
 
     _commit(alarms) {
-        Storage.set('alarms', this.alarms)
+        Storage.set('alarms', alarms)
     }
 
     setTimer() {
