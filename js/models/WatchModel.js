@@ -14,14 +14,14 @@ class WatchModel extends Observable{
 
     // 추가
     add(time) {
-        const TimeStr = time.replace('.', ':').split(':')
+        const [hour, min, sec, msec] = time.replace('.', ':').split(':')
         const record = {
             id: this.records.length > 0 ? this.records[this.records.length - 1].id + 1 : 1,
             time: {
-                hour: TimeStr[0],
-                min: TimeStr[1],
-                sec: TimeStr[2],
-                msec : TimeStr[3]
+                hour: hour,
+                min: min,
+                sec: sec,
+                msec : msec
             },
         }
 

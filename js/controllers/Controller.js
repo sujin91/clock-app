@@ -75,6 +75,7 @@ class Controller extends Observable {
         if (this.selectedTab === TabNames.CLOCK) {
             this.ClockView.render(this.ClockModel.getClock())
             this.AlarmFlag = this.AlarmModel.clearTimer()
+            // this.WatchFlag = this.AlarmModel.clearTimer()
             
             this.ClockView.show()
             this.AlarmView.hide()
@@ -84,7 +85,6 @@ class Controller extends Observable {
                 this.ClockModel.setTimer()
                 this.ClockFlag = true
             }
-
         } else if (this.selectedTab === TabNames.ALARM) {
             this.ClockView.render(this.ClockModel.getClock())
             this.AlarmView.renderList(this.AlarmModel.list())
@@ -99,7 +99,6 @@ class Controller extends Observable {
                 this.AlarmModel.setTimer()
                 this.AlarmFlag = true
             }
-            // debugger
         } else  { //if (this.selectedTab === TabNames.STOPWATCH)
             this.AlarmView.hide()
             this.WatchView.show()
@@ -142,7 +141,6 @@ class Controller extends Observable {
     /* 스톱워치 */
     // 초기화 버튼 처리
     onResetTimerWatch() {
-        // debugger
         // 시계/알람타이머 정지
         this.ClockFlag = this.ClockModel.clearTimer()
         this.AlarmFlag = this.AlarmModel.clearTimer()
@@ -165,25 +163,26 @@ class Controller extends Observable {
 
     // 기록 버튼 처리
     onAddRecord(time) {
-        // debugger
         // 초기화 안됐을 때
+        if (!this.isInit) {
+            MessageView(document.querySelector('.watch_area'), 'warning', Message.INIT)
 
-        if (!this.isInit) MessageView(document.querySelector('.watch_area'), 'warning', Message.INIT)
+            return
+        }
         // 기록 시작할 때 (카운트 돔) 
-        else if (this.isInit && this.isStop) {
+        if (this.isStop) {
             // this.startWatch() 
             this.WatchModel.startWatch()
             this.isStop = false
+
+            return
         }
         // 스탑워치 멈출 때 (카운트 멈춤)
-        else {
-            // this.stopWatch()
-            this.WatchModel.stopWatch()
-            this.WatchModel.add(time)
-            this.WatchView.renderList(this.WatchModel.list())
-            MessageView(document.querySelector('.watch_area'), 'success', Message.SUCCESS)
-            this.isStop = true
-        }
+        this.WatchModel.stopWatch()
+        this.WatchModel.add(time)
+        this.WatchView.renderList(this.WatchModel.list())
+        MessageView(document.querySelector('.watch_area'), 'success', Message.SUCCESS)
+        this.isStop = true
     }
 
     //삭제 버튼 처리

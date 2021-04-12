@@ -16,14 +16,14 @@ class AlarmModel extends ClockModel {
 
     // 추가
     add(time) {
-        const inputTimeStr = time.split(':')
+        const [hour, min, sec] = time.split(':')
         const alarm = {
-            seconds: Number(inputTimeStr[0]) * 60 * 60 + Number(inputTimeStr[1]) * 60 + Number(inputTimeStr[2]),  
+            seconds: Number(hour) * 60 * 60 + Number(min) * 60 + Number(sec),  
             time: {
                 date: this.getClock().date,
-                hour: inputTimeStr[0],
-                min: inputTimeStr[1],
-                sec: inputTimeStr[2],
+                hour: hour,
+                min: min,
+                sec: sec,
             },
             state: State.PENDING,
         }
@@ -56,27 +56,31 @@ class AlarmModel extends ClockModel {
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
         const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
         
-         // 빈자리 있는지 확인
-         const isEmpty = inputTime.length < 8 ? true : false;
-         // 과거 시간인지 확인
-         const isPast = inputSeconds - currentSeconds < 0 ? true : false;
- 
-         // 존재하는 알람인지 확인
-         const isExist = this.alarms.some( item => item.seconds === inputSeconds )
- 
-         // MessageView
-         if(isEmpty) {
-             MessageView(document.querySelector('.alarm_area'), 'warning', Message.EMPTY)
-         }
-         else if(isExist) {
-             MessageView(document.querySelector('.alarm_area'), 'warning', Message.EXIST)
-         }
-         else {
-             isPast && MessageView(document.querySelector('.alarm_area'), 'warning', Message.PAST)
-         }
+        // 빈자리 있는지 확인
+        const isEmpty = inputTime.length < 8;
+        // 과거 시간인지 확인
+        const isPast = inputSeconds - currentSeconds < 0 ? true : false;
+        // 존재하는 알람인지 확인
+        const isExist = this.alarms.some( item => item.seconds === inputSeconds )
+
+        // MessageView
+        if(isEmpty) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.EMPTY)
+
+            return true
+        }
+        if(isExist) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.EXIST)
+
+            return true
+        }
+        if(isPast) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.PAST)
+
+            return true
+        }
          
-         // 둘중 하나라도 유효하지 않으면 isError는 TRUE
-         return isExist || isPast || isEmpty
+        return false
     }
 
     // 리스트 요소 삭제

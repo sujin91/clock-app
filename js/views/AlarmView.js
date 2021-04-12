@@ -139,10 +139,10 @@ class AlarmView extends View {
             const $span = this.createElement('span')
             $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}`
 
-            if(item.state === 'expired') $span.style.color = '#888'
-            else if(item.state === 'active') $span.style.color = '#f00'
-            else $span.style.color = '#000'
-
+            item.state === 'pending' && $span.style.setProperty('color', '#000')
+            item.state === 'expired' && $span.style.setProperty('color', '#888')
+            item.state === 'active' && $span.style.setProperty('color', '#f00')
+            
             const $button = this.createElement('button', 'button_delete')
             $button.innerHTML = '삭제'
             
