@@ -10,10 +10,12 @@ class AlarmModel extends ClockModel {
     }
 
     // 리스트 가져오기
-    list = () => this.alarms
+    list() {
+        return this.alarms
+    }
 
     // 추가
-    add = time => {
+    add(time) {
         const inputTimeStr = time.split(':')
         const alarm = {
             seconds: Number(inputTimeStr[0]) * 60 * 60 + Number(inputTimeStr[1]) * 60 + Number(inputTimeStr[2]),  
@@ -34,7 +36,7 @@ class AlarmModel extends ClockModel {
     }
 
     // '초'에 따른 State 변화
-    changeState = () => {
+    changeState() {
         const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
 
@@ -49,7 +51,7 @@ class AlarmModel extends ClockModel {
         this._commit(this.alarms)
     }
 
-    isError = (inputTime) => {
+    isError(inputTime) {
         const currentTime = this.getClock()
         const currentSeconds = currentTime.hour * 60 * 60 + currentTime.min * 60 + currentTime.sec
         const inputSeconds = Number(inputTime.hour) * 60 * 60 + Number(inputTime.min) * 60 + Number(inputTime.sec)
@@ -78,12 +80,12 @@ class AlarmModel extends ClockModel {
     }
 
     // 리스트 요소 삭제
-    delete = seconds => {
+    delete(seconds) {
         this.alarms = this.alarms.filter( item => item.seconds !== Number(seconds))
         this._commit(this.alarms)
     }
 
-    _commit = alarms => {
+    _commit(alarms) {
         Storage.set('alarms', this.alarms)
     }
 

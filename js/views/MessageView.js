@@ -1,4 +1,4 @@
-export function MessageView ($target, className, text) {
+export function MessageView($target, className, text) {
     const $message = document.createElement('p')
     $message.innerHTML = text
     $message.className = className

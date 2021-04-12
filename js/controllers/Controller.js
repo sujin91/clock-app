@@ -57,19 +57,19 @@ class Controller extends Observable {
         this.onChangeTab(this.selectedTab)
     }
 
-    handleClock = (clock) => {
+    handleClock(clock) {
         this.ClockView.render(clock)
     }
     
-    handleAlarm = (list) => {
+    handleAlarm(list) {
         this.AlarmView.renderList(list)
     }
 
-    handleWatch = (watch) => {
+    handleWatch(watch) {
         this.WatchView.renderStopWatch(watch)
     }
 
-    onChangeTab = tabName => {
+    onChangeTab(tabName) {
         this.selectedTab = tabName
         
         if (this.selectedTab === TabNames.CLOCK) {
@@ -116,12 +116,12 @@ class Controller extends Observable {
 
     /* 알람 */
     // 현재시간 버튼 처리
-    onGetTime = () => {
+    onGetTime() {
         this.AlarmView.renderTime(this.ClockModel.getClock())
     }
 
     // 등록 버튼 처리
-    onAddAlarm = time => {
+    onAddAlarm(time) {
         //Message 존재하면 삭제
         document.querySelector('.warning')?.remove();
         document.querySelector('.success')?.remove();
@@ -134,14 +134,14 @@ class Controller extends Observable {
     }
 
     // 삭제 버튼 처리
-    onDeleteAlarm = id => {
+    onDeleteAlarm(id) {
         this.AlarmModel.delete(id)   
         this.AlarmView.renderList(this.AlarmModel.list())
     }
 
     /* 스톱워치 */
     // 초기화 버튼 처리
-    onResetTimerWatch = () => {
+    onResetTimerWatch() {
         // debugger
         // 시계/알람타이머 정지
         this.ClockFlag = this.ClockModel.clearTimer()
@@ -164,7 +164,7 @@ class Controller extends Observable {
     }
 
     // 기록 버튼 처리
-    onAddRecord = (time) => {
+    onAddRecord(time) {
         // debugger
         // 초기화 안됐을 때
 
@@ -187,7 +187,7 @@ class Controller extends Observable {
     }
 
     //삭제 버튼 처리
-    onDeleteRecord = id => {
+    onDeleteRecord(id) {
         this.WatchModel.delete(id)   
         this.WatchView.renderList(this.WatchModel.list())
     }

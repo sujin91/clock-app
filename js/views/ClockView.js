@@ -9,7 +9,7 @@ class ClockView extends View {
     }
 
     // 시계 렌더
-    render = (clock) => {
+    render(clock) {
         const hour = String(clock.hour).padStart(2, "0") 
         const min = String(clock.min).padStart(2, "0")
         const sec = String(clock.sec).padStart(2, "0")

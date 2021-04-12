@@ -22,7 +22,7 @@ class AlarmView extends View {
     }
 
     // 알람폼에 있는 시간
-    getInputTime = () => {
+    getInputTime() {
         const TimeStr = this.$inputEl.value.split(':')
         const inputTime = {
             length: this.$inputEl.value.length,
@@ -30,10 +30,11 @@ class AlarmView extends View {
             min: TimeStr[1],
             sec: TimeStr[2]
         }
+
         return inputTime
     }
 
-    bindEvents = () => {
+    bindEvents() {
         // 현재시간버튼
         this.$buttonGetTime.addEventListener('click', e => this.onClickGetTime())
 
@@ -51,7 +52,7 @@ class AlarmView extends View {
         this.$alarmList.addEventListener('click', e => e.target.className === 'button_delete' && this.onClickDeleteAlarm(e) )
     }
 
-    onKeyUp = (e) => {
+    onKeyUp(e) {
         const inputTime = this.getInputTime()
 
         if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
@@ -63,7 +64,7 @@ class AlarmView extends View {
     }
 
     // 숫자, 주요키만 사용 가능
-    filterNumber = e => {
+    filterNumber(e) {
         if (Number(e.key) >= 0 && Number(e.key) < 10) {
             this.isDeleteMode = false
             return
@@ -83,7 +84,7 @@ class AlarmView extends View {
         e.preventDefault();
     }
     
-    onKeyDown = (e) => {
+    onKeyDown(e) {
         // 숫자&&명령어만 사용 가능
         this.filterNumber(e)
         
@@ -99,22 +100,24 @@ class AlarmView extends View {
     }
 
     // 현재시간
-    onClickGetTime = () => {
+    onClickGetTime() {
         this.$inputEl.focus();
         this.emit('@click')
     }
 
     // 등록
-    onClickAddAlarm = () => {
+    onClickAddAlarm() {
         this.$inputEl.focus();
         this.emit('@submit', {input: this.$inputEl.value})
     }
 
     // 삭제
-    onClickDeleteAlarm = e => this.emit('@delete', {id: e.toElement.parentNode.id})
+    onClickDeleteAlarm(e) {
+        this.emit('@delete', {id: e.toElement.parentNode.id})
+    }
 
     // 폼요소에 현재시각 렌더
-    renderTime = currentTime => {
+    renderTime(currentTime) {
         //문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
         const hour = String(currentTime.hour).padStart(2, "0") 
         const min = String(currentTime.min).padStart(2, "0")
@@ -124,7 +127,7 @@ class AlarmView extends View {
     }
 
     // 알람목록 렌더
-    renderList = list => {
+    renderList(list) {
         while (this.$alarmList.firstChild) {
             this.$alarmList.removeChild(this.$alarmList.firstChild)
         }

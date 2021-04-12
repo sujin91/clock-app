@@ -17,9 +17,11 @@ class WatchView extends View {
     }
 
     // 00:00:00 초기화 렌더
-    renderReset = () => this.$clock.innerHTML = `00:00:00`
+    renderReset() {
+        this.$clock.innerHTML = `00:00:00`
+    }
 
-    bindEvents = () => {
+    bindEvents() {
         //초기화버튼
         this.$buttonReset.addEventListener('click', e => this.onReset())
 
@@ -31,23 +33,23 @@ class WatchView extends View {
     }
 
     //초기화
-    onReset = () => {
+    onReset() {
         this.emit('@reset') // broadcast the event '@reset'
     }
 
     //기록
-    onAddRecord = () => {
+    onAddRecord() {
         this.emit('@click', {time: this.$clock.innerHTML})
     }
 
     //삭제
-    onDeleteRecord = e => {
+    onDeleteRecord(e) {
         this.emit('@delete', {id: Number(e.toElement.parentNode.id)}) 
         // this.register
     }
 
     // 스톱워치 시계 렌더
-    renderStopWatch = ( watchTime ) => {
+    renderStopWatch(watchTime) {
         this.hour = String(Math.floor(watchTime / 1000 / 60 / 60) % 60).padStart(2, "0")
         this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(2, "0")
         this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
@@ -57,7 +59,7 @@ class WatchView extends View {
     }
 
     // 탭이동으로 인한 스톱워치 마지막 기록값 렌더
-    renderLastWatch = ( records ) => {
+    renderLastWatch(records) {
         // 기록이 있으면
         if(records.length > 0) {
             let lastRecord = records[records.length - 1]
@@ -70,7 +72,7 @@ class WatchView extends View {
     }
 
     // 스톱워치 기록 목록 렌더
-    renderList = list => {
+    renderList(list) {
         while (this.$recordList.firstChild) {
             this.$recordList.removeChild(this.$recordList.firstChild)
         }
@@ -90,7 +92,6 @@ class WatchView extends View {
         })
 
         this.$recordCount.innerHTML = `총: ${list.length}` 
-
     }
 }
 export default WatchView
