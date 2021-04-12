@@ -1,4 +1,4 @@
-import { BTN_DELETE, Color, State, Key } from '../constants.js'
+import { BTN_DELETE, Color, State } from '../constants.js'
 import { Message } from '../constants.js'
 import { MessageView } from './MessageView.js'
 
@@ -23,26 +23,14 @@ class AlarmView extends View {
         this.bindDeleteEvent()
     }
 
-    // 알람폼에 있는 시간
-    getInputTime() {
-        const [hour, min, sec] = this.$inputEl.value.split(':')
-        const inputTime = {
-            length: this.$inputEl.value.length,
-            hour: hour,
-            min: min,
-            sec: sec
-        }
-
-        return inputTime
-    }
-
     bindEvents() {
         // 현재시간버튼
         this.$buttonGetTime.addEventListener('click', e => this.onClickGetTime())
 
         // 키보드처리, 콜론자동완성
-        this.$inputEl.addEventListener('keyup', e => this.onKeyUp(e))
         this.$inputEl.addEventListener('keydown', e => this.onKeyDown(e))
+
+        this.$inputEl.addEventListener('input', e => this.onInput(e))
 
         // 등록버튼
         this.$form.addEventListener('submit', e => {
@@ -56,51 +44,54 @@ class AlarmView extends View {
         this.$alarmList.addEventListener('click', e => e.target.className === 'button_delete' && this.onDeleteAlarm(e))
     }
 
-    onKeyUp(e) {
-        const inputTime = this.getInputTime()
+    onInput(e) {
+        this.regex = /[^0-9:]/gi //숫자 + 콜론 정규식
+        this.$inputEl.value = this.$inputEl.value.replace(this.regex, '')
 
-        if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.FORMAT)
-            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1)
+        if( (!this.backSpaceMode && (this.$inputEl.value.length === 2 || this.$inputEl.value.length === 5))) {
+            this.$inputEl.value = `${this.$inputEl.value}:`
         }
 
-        e.key === Key.ENTER && this.emit('@submit', {input: this.$inputEl.value})
+        this.inputAlarm = this.$inputEl.value.split(':')//.map(Number)
+
+        console.log(this.inputAlarm)
+
+
+        if (Number(this.inputAlarm[0]) > 23) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.HOUR_FORMAT)
+            this.inputAlarm.splice(0);
+            this.$inputEl.value = this.inputAlarm.join(':')
+        }
+        if (Number(this.inputAlarm[1]) > 59) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.MIN_FORMAT)
+            this.inputAlarm.splice(1);
+            this.$inputEl.value = this.inputAlarm.join(':')+':'
+        }
+        if (Number(this.inputAlarm[2]) > 59) {
+            MessageView(document.querySelector('.alarm_area'), 'warning', Message.SEC_FORMAT)
+            this.inputAlarm.splice(2);
+            this.$inputEl.value = this.inputAlarm.join(':')+':'
+        } 
     }
+    
+    onKeyDown(e) {
+        // 숫자&&주요키만 사용 가능
+        const whiteList = ['Control', 'Alt', 'Meta', 'ArrowLeft', 'ArrowRight', 'Enter', 'Tab', 'Home', 'End', 'Delete']
 
-    // 숫자, 주요키만 사용 가능
-    filterNumber(e) {
         if (Number(e.key) >= 0 && Number(e.key) < 10) {
-            this.isDeleteMode = false
+            this.backSpaceMode = false
             return
         }
-        if (e.ctrlKey || e.altKey || e.metaKey) {
-            return 
-        }
-        if (e.key === Key.TAB || e.key === Key.HOME || e.key === Key.END || e.key === Key.ARROW_LEFT ||
-            e.key === Key.ARROW_RIGHT || e.key === Key.DELETE) {
+        if (whiteList.some(code => e.code === code)) {
+            this.backSpaceMode = false
             return
         }
-        if ( e.key === Key.BACKSPACE ) {
-            this.isDeleteMode = true
+        if ( e.key === 'Backspace' ) {
+            this.backSpaceMode = true
             return
         }
         
         e.preventDefault()
-    }
-    
-    onKeyDown(e) {
-        // 숫자&&명령어만 사용 가능
-        this.filterNumber(e)
-        
-        // 자동 콜론 생성
-        if( (!this.isDeleteMode && (this.$inputEl.value.length === 2 || this.$inputEl.value.length === 5))) {
-            this.$inputEl.value = `${this.$inputEl.value}:`
-        }
-
-        // 콜론지울 때 처리
-        if(e.key === Key.BACKSPACE && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
-            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1)    
-        }
     }
 
     // 현재시간

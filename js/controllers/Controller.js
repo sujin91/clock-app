@@ -128,7 +128,7 @@ class Controller extends Observable {
         document.querySelector('.success')?.remove()
 
         const isErrorText = this.AlarmModel.isError(time)
-
+        
         if(isErrorText) {
             MessageView(document.querySelector('.alarm_area'), 'warning', isErrorText)
         } else {
@@ -136,6 +136,7 @@ class Controller extends Observable {
             this.AlarmView.renderList(this.AlarmModel.list())
             MessageView(document.querySelector('.alarm_area'), 'success', Message.SUCCESS)
         }
+        
     }
 
     // 삭제 버튼 처리

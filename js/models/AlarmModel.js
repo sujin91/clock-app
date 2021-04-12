@@ -52,22 +52,23 @@ class AlarmModel extends ClockModel {
 
     isError(inputTime) {
         const [hour, min, sec] = inputTime.split(':')
-
+        
         const currentTime = this.getClock()
         const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
         const inputSeconds = this.getSeconds(hour, min, sec)
 
-        // 빈자리 있는지 확인
-        if(inputTime.length < 8) {
+        
+        // 시간형식에 맞는지 확인
+        if(inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
             return Message.EMPTY
         }
         // 과거 시간인지 확인
-        if(inputSeconds - currentSeconds < 0) {
-            return Message.EXIST
+        if(inputSeconds - currentSeconds <= 0) {
+            return Message.PAST
         }
         // 존재하는 알람인지 확인
         if(this.alarms.some( item => item.seconds === inputSeconds )) {
-            return Message.PAST
+            return Message.EXIST
         }
         return false
     }

@@ -9,7 +9,9 @@ export const Message = {
     EXIST: '이미 존재하는 알람입니다.',
     PAST: '과거시간은 알람을 등록할 수 없습니다.',
     INIT: '초기화 해주세요.',
-    FORMAT: '24시/60분/60초를 넘길 수 없습니다',
+    HOUR_FORMAT: '24시를 넘길 수 없습니다',
+    MIN_FORMAT: '60분을 넘길 수 없습니다',
+    SEC_FORMAT: '60초를 넘길 수 없습니다',
     SUCCESS: '등록하였습니다.'
 }
 
@@ -25,16 +27,16 @@ export const Color = {
     BLACK: '#000'
 }
 
-export const Key = {
-    BACKSPACE: 'Backspace',
-    ENTER: 'Enter',
-    TAB: 'Tab',
-    HOME: 'Home',
-    END: 'End',
-    ARROW_LEFT: 'ArrowLeft',
-    ARROW_RIGHT: 'ArrowRight',
-    DELETE: 'Delete'
-}
+// export const Key = {
+//     BACKSPACE: 'Backspace',
+//     ENTER: 'Enter',
+//     TAB: 'Tab',
+//     HOME: 'Home',
+//     END: 'End',
+//     ARROW_LEFT: 'ArrowLeft',
+//     ARROW_RIGHT: 'ArrowRight',
+//     DELETE: 'Delete'
+// }
 
 export const BTN_RESET = '초기화'
 export const BTN_RECORD = '기록'
