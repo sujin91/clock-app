@@ -36,6 +36,8 @@ export const Key = {
     DELETE: 'Delete'
 }
 
+export const BTN_RESET = '초기화'
+export const BTN_RECORD = '기록'
 export const BTN_DELETE = '삭제'
 export const INIT_TIMESTAMP = '00:00:00'
 

@@ -1,4 +1,4 @@
-import { INIT_TIMESTAMP, BTN_DELETE } from '../constants.js'
+import { INIT_TIMESTAMP, BTN_DELETE, BTN_RESET, BTN_RECORD } from '../constants.js'
 
 import View from './View.js'
 
@@ -7,13 +7,16 @@ class WatchView extends View {
         super()
         this.$element = $target
         this.$watch = this.$element.querySelector('.watch')
-        this.$buttonReset = this.$element.querySelector('.button_reset')
-        this.$buttonRecord = this.$element.querySelector('.button_record')
+        this.$buttonGroup = this.$element.querySelector('.button_area')
+        // this.$buttonReset = this.$element.querySelector('.button_reset')
+        // this.$buttonRecord = this.$element.querySelector('.button_record')
         this.$recordCount = this.createElement('strong', 'count')
         this.$recordList = this.createElement('ul', 'list')
         this.$element.append(this.$recordList, this.$recordCount)
         this.$watch.style.setProperty('display', 'none')
-        this.bindEvents()
+        // this.bindEvents()
+        this.bindBtnEvent()
+        this.bindDeleteEvent()
     }
 
     // 00:00:00 초기화 렌더
@@ -22,13 +25,14 @@ class WatchView extends View {
         this.$watch.innerHTML = INIT_TIMESTAMP
     }
 
-    bindEvents() {
-        //초기화버튼
-        this.$buttonReset.addEventListener('click', e => this.onReset())
+    bindBtnEvent () {
+        this.$buttonGroup.addEventListener('click', e => {
+            e.target.innerHTML === BTN_RESET && this.onReset()
+            e.target.innerHTML === BTN_RECORD && this.onAddRecord()
+        })
+    }
 
-        //기록버튼
-        this.$buttonRecord.addEventListener('click', e => this.onAddRecord())
-
+    bindDeleteEvent () {
         //삭제버튼
         this.$recordList.addEventListener('click', e => e.target.className === 'button_delete' && this.onDeleteRecord(e))
     }
@@ -46,6 +50,9 @@ class WatchView extends View {
     //삭제
     onDeleteRecord(e) {
         this.emit('@delete', { id: Number(e.toElement.parentNode.id) }) 
+
+        // 언바인딩
+        this.$recordList.removeEventListener('click', e => this.onDeleteRecord(e))
     }
 
     // 스톱워치 시계 렌더

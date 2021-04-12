@@ -20,6 +20,7 @@ class AlarmView extends View {
         this.$element.append(this.$alarmList, this.$alarmCount)
 
         this.bindEvents()
+        this.bindDeleteEvent()
     }
 
     // 알람폼에 있는 시간
@@ -48,9 +49,11 @@ class AlarmView extends View {
             e.preventDefault()
             this.onClickAddAlarm(this.$inputEl)
         })
+    }
 
-        // 삭제버튼
-        this.$alarmList.addEventListener('click', e => e.target.className === 'button_delete' && this.onClickDeleteAlarm(e) )
+    bindDeleteEvent () {
+        //삭제버튼
+        this.$alarmList.addEventListener('click', e => e.target.className === 'button_delete' && this.onDeleteAlarm(e))
     }
 
     onKeyUp(e) {
@@ -113,8 +116,11 @@ class AlarmView extends View {
     }
 
     // 삭제
-    onClickDeleteAlarm(e) {
+    onDeleteAlarm(e) {
         this.emit('@delete', {id: e.toElement.parentNode.id})
+
+        // 언바인딩
+        this.$alarmList.removeEventListener('click', e => this.onDeleteAlarm(e))
     }
 
     // 폼요소에 현재시각 렌더
