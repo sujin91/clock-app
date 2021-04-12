@@ -32,28 +32,28 @@ class Controller extends Observable {
 
         // 탭
         this.TabView
-        .on('@change', e => this.onChangeTab(e.detail.tabName))
+            .on('@change', e => this.onChangeTab(e.detail.tabName))
 
         // 알람
         this.AlarmView
-        .on('@click', e => this.onGetTime())
-        .on('@submit', e => this.onAddAlarm(e.detail.input))
-        .on('@delete', e => this.onDeleteAlarm(e.detail.id))
-        
+            .on('@click', e => this.onGetTime())
+            .on('@submit', e => this.onAddAlarm(e.detail.input))
+            .on('@delete', e => this.onDeleteAlarm(e.detail.id))
+            
         // 스탑워치
         this.WatchView
-        .on('@reset', e => this.onResetTimerWatch())
-        .on('@click', e => this.onAddRecord(e.detail.time))
-        .on('@delete', e => this.onDeleteRecord(e.detail.id))
+            .on('@reset', e => this.onResetTimerWatch())
+            .on('@click', e => this.onAddRecord(e.detail.time))
+            .on('@delete', e => this.onDeleteRecord(e.detail.id))
 
         // 처음 화면 렌더링
-        // 초기 탭
         this.ClockView.hide()
         this.AlarmView.hide()
         this.WatchView.hide()
 
+        // 초기 탭
         this.selectedTab = TabNames.CLOCK
-        this.ClockFlag = false;
+        this.ClockFlag = false
         this.onChangeTab(this.selectedTab)
     }
 
@@ -124,8 +124,8 @@ class Controller extends Observable {
     // 등록 버튼 처리
     onAddAlarm(time) {
         //Message 존재하면 삭제
-        document.querySelector('.warning')?.remove();
-        document.querySelector('.success')?.remove();
+        document.querySelector('.warning')?.remove()
+        document.querySelector('.success')?.remove()
 
         if(!this.AlarmModel.isError(this.AlarmView.getInputTime())) {
             this.AlarmModel.add(time)
@@ -155,13 +155,13 @@ class Controller extends Observable {
         // 기록 목록 랜더
         this.WatchView.renderList(this.WatchModel.list())
         // 초기화 되었다는 플래그
-        this.isInit = true;
+        this.isInit = true
         // 기록 중에 초기화 누르면? 타이머정지
         this.WatchModel.clearWatch()
-        this.isStop = true;
+        this.isStop = true
         //Message 존재하면 삭제
-        document.querySelector('.warning')?.remove();
-        document.querySelector('.success')?.remove();
+        document.querySelector('.warning')?.remove()
+        document.querySelector('.success')?.remove()
     }
 
     // 기록 버튼 처리
@@ -194,4 +194,5 @@ class Controller extends Observable {
         this.WatchView.renderList(this.WatchModel.list())
     }
 }
+
 export default Controller

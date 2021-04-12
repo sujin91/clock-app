@@ -1,9 +1,9 @@
 import View from './View.js'
-import {TabNames} from '../constants.js'
+import { TabNames } from '../constants.js'
 
 class TabView extends View {
     constructor($target) {
-        super();
+        super()
         this.$element = $target
         this.$tab = this.$element.querySelectorAll('.tab_list li')
 

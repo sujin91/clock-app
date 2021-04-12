@@ -1,9 +1,10 @@
+import { INIT_TIMESTAMP, BTN_DELETE } from '../constants.js'
+
 import View from './View.js'
-import Observable from '../utils/Observable.js';
 
 class WatchView extends View {
     constructor($target) {
-        super();
+        super()
         this.$element = $target
         this.$watch = this.$element.querySelector('.watch')
         this.$buttonReset = this.$element.querySelector('.button_reset')
@@ -18,7 +19,7 @@ class WatchView extends View {
     // 00:00:00 초기화 렌더
     renderReset() {
         this.$watch.style.setProperty('display', 'block')
-        this.$watch.innerHTML = `00:00:00`
+        this.$watch.innerHTML = INIT_TIMESTAMP
     }
 
     bindEvents() {
@@ -84,7 +85,7 @@ class WatchView extends View {
             $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}.${item.time.msec}`
 
             const $button = this.createElement('button', 'button_delete')
-            $button.innerHTML = '삭제'
+            $button.innerHTML = BTN_DELETE
             
             $li.append($span, $button)
             this.$recordList.append($li)    
@@ -93,4 +94,5 @@ class WatchView extends View {
         this.$recordCount.innerHTML = `총: ${list.length}` 
     }
 }
+
 export default WatchView

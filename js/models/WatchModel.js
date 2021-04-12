@@ -31,7 +31,7 @@ class WatchModel extends Observable{
 
     // 리스트 전체 비우기
     clear() {
-        this.records = [];
+        this.records = []
         this._commit(this.records)
     }
 

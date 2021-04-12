@@ -57,9 +57,9 @@ class AlarmModel extends ClockModel {
         const inputSeconds = this.getSeconds(inputTime.hour, inputTime.min, inputTime.sec)
         
         // 빈자리 있는지 확인
-        const isEmpty = inputTime.length < 8;
+        const isEmpty = inputTime.length < 8
         // 과거 시간인지 확인
-        const isPast = inputSeconds - currentSeconds < 0 ? true : false;
+        const isPast = inputSeconds - currentSeconds < 0 ? true : false
         // 존재하는 알람인지 확인
         const isExist = this.alarms.some( item => item.seconds === inputSeconds )
 

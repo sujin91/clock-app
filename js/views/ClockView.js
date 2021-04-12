@@ -3,7 +3,7 @@ import View from './View.js'
 // 시계탭
 class ClockView extends View {
     constructor($target) {
-        super();
+        super()
         this.$element = $target
         this.$clock = this.$element.querySelector('.clock')
     }

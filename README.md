@@ -19,3 +19,5 @@
   - [ ] optional chaining
   - [ ] padStart 
 - [ ] KeyCode 교체
+- [ ] 언바인딩
+- [ ] input 알람 수정

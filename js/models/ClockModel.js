@@ -31,12 +31,13 @@ class ClockModel extends Observable {
             this.notify('@CLOCK', this.clock)
         }, 1000)
 
-        return true;
+        return true
     }
 
     clearTimer() {
         clearInterval(this.timer)
-        return false;
+        return false
     }
 }
+
 export default ClockModel

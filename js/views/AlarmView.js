@@ -1,3 +1,4 @@
+import { BTN_DELETE, Color, State, Key } from '../constants.js'
 import { Message } from '../constants.js'
 import { MessageView } from './MessageView.js'
 
@@ -6,7 +7,7 @@ import View from './View.js'
 // 알람 탭
 class AlarmView extends View {
     constructor($target) {
-        super();        
+        super()        
         this.$element = $target
         this.$form = this.$element.querySelector('.form_section')
         this.$inputEl = this.$form.querySelector('.input')
@@ -57,10 +58,10 @@ class AlarmView extends View {
 
         if(inputTime.hour > 23 || inputTime.min > 59 || inputTime.sec > 59) {
             MessageView(document.querySelector('.alarm_area'), 'warning', Message.FORMAT)
-            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);
+            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1)
         }
 
-        e.key === 'Enter' && this.emit('@submit', {input: this.$inputEl.value})
+        e.key === Key.ENTER && this.emit('@submit', {input: this.$inputEl.value})
     }
 
     // 숫자, 주요키만 사용 가능
@@ -72,16 +73,16 @@ class AlarmView extends View {
         if (e.ctrlKey || e.altKey || e.metaKey) {
             return 
         }
-        if (e.key === 'Tab' || e.key === 'Home' || e.key === 'End' || e.key === 'ArrowLeft' ||
-            e.key === 'ArrowRight' || e.key === 'Delete') {
+        if (e.key === Key.TAB || e.key === Key.HOME || e.key === Key.END || e.key === Key.ARROW_LEFT ||
+            e.key === Key.ARROW_RIGHT || e.key === Key.DELETE) {
             return
         }
-        if ( e.key === 'Backspace' ) {
+        if ( e.key === Key.BACKSPACE ) {
             this.isDeleteMode = true
             return
         }
         
-        e.preventDefault();
+        e.preventDefault()
     }
     
     onKeyDown(e) {
@@ -94,20 +95,20 @@ class AlarmView extends View {
         }
 
         // 콜론지울 때 처리
-        if(e.key === 'Backspace' && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
-            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1);    
+        if(e.key === Key.BACKSPACE && (this.$inputEl.value.length === 4 || this.$inputEl.value.length === 7) ) {
+            this.$inputEl.value = this.$inputEl.value.substr(0, this.$inputEl.value.length - 1)    
         }
     }
 
     // 현재시간
     onClickGetTime() {
-        this.$inputEl.focus();
+        this.$inputEl.focus()
         this.emit('@click')
     }
 
     // 등록
     onClickAddAlarm() {
-        this.$inputEl.focus();
+        this.$inputEl.focus()
         this.emit('@submit', {input: this.$inputEl.value})
     }
 
@@ -139,12 +140,12 @@ class AlarmView extends View {
             const $span = this.createElement('span')
             $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}`
 
-            item.state === 'pending' && $span.style.setProperty('color', '#000')
-            item.state === 'expired' && $span.style.setProperty('color', '#888')
-            item.state === 'active' && $span.style.setProperty('color', '#f00')
+            item.state === State.PENDING && $span.style.setProperty('color', Color.BLACK)
+            item.state === State.EXPIRED && $span.style.setProperty('color', Color.GRAY)
+            item.state === State.ACTIVE && $span.style.setProperty('color', Color.RED)
             
             const $button = this.createElement('button', 'button_delete')
-            $button.innerHTML = '삭제'
+            $button.innerHTML = BTN_DELETE
             
             $li.append($span, $button)
             this.$alarmList.append($li)    

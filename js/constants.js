@@ -1,16 +1,7 @@
-export const SECOND = 1000; // 1s
-
 export const TabNames = {
     CLOCK: '시계',
     ALARM: '알람',
     STOPWATCH: '스톱워치',
-}
-
-export const Key = {
-    // Backspace
-    ENTER: 13,
-    BACKSPACE: 8,
-    SHIFT: 186,
 }
 
 export const Message = {
@@ -27,3 +18,24 @@ export const State = {
     ACTIVE: 'active',
     PENDING: 'pending',
 }
+
+export const Color = {
+    RED: 'F00',
+    GRAY: '#888',
+    BLACK: '#000'
+}
+
+export const Key = {
+    BACKSPACE: 'Backspace',
+    ENTER: 'Enter',
+    TAB: 'Tab',
+    HOME: 'Home',
+    END: 'End',
+    ARROW_LEFT: 'ArrowLeft',
+    ARROW_RIGHT: 'ArrowRight',
+    DELETE: 'Delete'
+}
+
+export const BTN_DELETE = '삭제'
+export const INIT_TIMESTAMP = '00:00:00'
+

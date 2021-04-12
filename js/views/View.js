@@ -13,12 +13,12 @@ export default class View {
 
     // 요소 노출,숨김
     hide() {
-        this.$element.style.setProperty(`display`, `none`);
+        this.$element.style.setProperty(`display`, `none`)
         return this
     }
 
     show() {
-        this.$element.style.getPropertyValue(`display`) === `none` && this.$element.style.setProperty(`display`, `block`);
+        this.$element.style.getPropertyValue(`display`) === `none` && this.$element.style.setProperty(`display`, `block`)
         return this
     }
 

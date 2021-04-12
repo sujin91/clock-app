@@ -206,7 +206,7 @@ legend,
     margin-bottom: -1px;
     padding: 5px 10px;
     border-radius: 3px 3px 0 0;
-    /* background: #eee; */
+    /* background: #eee */;
     border: 1px solid #555;
     border-bottom: 0;
     text-align: center;
@@ -290,7 +290,7 @@ legend,
     color: #fff;
     margin-left: 20px;
     padding: 5px 10px;
-    border-radius: 3px
+    border-radius: 3px;
 }
 
 .button_delete:hover {
