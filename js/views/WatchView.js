@@ -7,14 +7,14 @@ class WatchView extends View {
         super()
         this.$element = $target
         this.$watch = this.$element.querySelector('#watch')
-        this.$buttonGroup = this.$element.querySelector('#buttonArea')
+        this.$buttonReset = this.$element.querySelector('#buttonReset')
+        this.$buttonRecord = this.$element.querySelector('#buttonRecord')
         this.$recordCount = this.createElement('strong', 'count')
         this.$recordList = this.createElement('ul', 'list')
         this.$element.append(this.$recordList, this.$recordCount)
         this.$watch.style.setProperty('display', 'none')
-        // this.bindEvents()
-        this.bindBtnEvent()
-        this.bindDeleteEvent()
+
+        this.bindEvents()
     }
 
     // 00:00:00 초기화 렌더
@@ -23,34 +23,22 @@ class WatchView extends View {
         this.$watch.innerHTML = INIT_TIMESTAMP
     }
 
-    bindBtnEvent () {
-        this.$buttonGroup.addEventListener('click', e => {
-            e.target.innerHTML === BTN_RESET && this.onReset()
-            e.target.innerHTML === BTN_RECORD && this.onAddRecord()
-        })
+    bindEvents() {
+        this.$buttonRecord.addEventListener('click', this.onAddRecord)
+        this.$buttonReset.addEventListener('click', this.onReset)
+        this.$recordList.addEventListener('click', this.onDeleteRecord)
     }
 
-    bindDeleteEvent () {
-        //삭제버튼
-        this.$recordList.addEventListener('click', e => e.target.id === 'buttonDelete' && this.onDeleteRecord(e))
+    onReset = () => this.emit('@RESET') // broadcast the event '@RESET'
+    
+    onAddRecord = () => {
+        this.$recordList.childElementCount === 0 && this.$recordList.addEventListener('click', this.onDeleteRecord)  
+        this.emit('@ADD', { time: this.$watch.innerHTML })
     }
 
-    //초기화
-    onReset() {
-        this.emit('@RESET') // broadcast the event '@reset'
-    }
-
-    //기록
-    onAddRecord() {
-        this.emit('@CLICK', { time: this.$watch.innerHTML })
-    }
-
-    //삭제
-    onDeleteRecord(e) {
-        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) 
-
-        // 언바인딩
-        this.$recordList.removeEventListener('click', e => this.onDeleteRecord(e))
+    onDeleteRecord = e => {
+        e.target.id === 'buttonDelete' && this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+        this.$recordList.firstChild === null && this.destroy('click', this.$recordList, this.onDeleteRecord)
     }
 
     // 스톱워치 시계 렌더
@@ -69,11 +57,11 @@ class WatchView extends View {
         if(records.length > 0) {
             let lastRecord = records[records.length - 1]
             this.$watch.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
+
+            return
         } 
-        else {
-            // 00:00:00 렌더
-            this.renderReset()
-        }
+        
+        this.renderReset()
     }
 
     // 스톱워치 기록 목록 렌더

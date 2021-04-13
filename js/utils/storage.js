@@ -1,4 +1,4 @@
-export const NAMESPACE = 'clock-app_'
+import { NAMESPACE } from '../constants.js'
 
 export const Storage = {
     get: key => {

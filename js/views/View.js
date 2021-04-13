@@ -11,6 +11,12 @@ export default class View {
         return this
     }
 
+    // 언바인딩
+    destroy(e, $element, handler) {
+        $element.removeEventListener(e, handler)
+        return this
+    }
+
     // 요소 노출,숨김
     hide() {
         this.$element.style.setProperty(`display`, `none`)

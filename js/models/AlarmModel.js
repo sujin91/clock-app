@@ -1,4 +1,4 @@
-import { Message, State } from '../constants.js'
+import { MESSAGE, STATE } from '../constants.js'
 import { Storage } from '../utils/Storage.js'
 import ClockModel from './ClockModel.js'
 
@@ -24,7 +24,7 @@ class AlarmModel extends ClockModel {
                 min: min,
                 sec: sec,
             },
-            state: State.PENDING,
+            state: STATE.PENDING,
         }
 
         this.alarms.push(alarm)
@@ -41,8 +41,8 @@ class AlarmModel extends ClockModel {
 
         this.alarms.forEach( item => {
             // 알람 state Change
-            if(item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = State.ACTIVE
-            else if(item.seconds - currentSeconds < 0 ) item.state = State.EXPIRED
+            if(item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = STATE.ACTIVE
+            else if(item.seconds - currentSeconds < 0 ) item.state = STATE.EXPIRED
 
             // 자정 Change
             if(item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
@@ -60,15 +60,15 @@ class AlarmModel extends ClockModel {
         
         // 시간형식에 맞는지 확인
         if(inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
-            return Message.EMPTY
+            return MESSAGE.EMPTY
         }
         // 과거 시간인지 확인
         if(inputSeconds - currentSeconds <= 0) {
-            return Message.PAST
+            return MESSAGE.PAST
         }
         // 존재하는 알람인지 확인
         if(this.alarms.some( item => item.seconds === inputSeconds )) {
-            return Message.EXIST
+            return MESSAGE.EXIST
         }
         return false
     }

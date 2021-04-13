@@ -10,14 +10,14 @@
 - [ ] active 알람 깜빡이게
 
 ## TODO
-- [ ] observer 작성하기
+- [x] observer 작성하기
 - [ ] handle로 이름바꿀까
-- [ ] es6 함수 활용할게있나..찾기
-  - [ ] some
-  - [ ] for .. of
+- [x] es6 함수 활용할게있나..찾기
+  - [x] some
+  - [x] for .. of
   - [ ] Nullish 
-  - [ ] optional chaining
-  - [ ] padStart 
-- [ ] KeyCode 교체
+  - [x] optional chaining
+  - [x] padStart 
+- [x] KeyCode -> Key 교체
 - [ ] 언바인딩
-- [ ] input 알람 수정
+- [x] input 유효성검사수정

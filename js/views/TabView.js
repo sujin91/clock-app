@@ -1,5 +1,5 @@
 import View from './View.js'
-import { TabNames } from '../constants.js'
+import { TAB_NAMES } from '../constants.js'
 
 class TabView extends View {
     constructor($target) {
@@ -7,8 +7,8 @@ class TabView extends View {
         this.$element = $target
         this.$tab = this.$element.querySelectorAll('#tabs li')
 
-        this.bindClick()
-        this.setActiveTab(TabNames.CLOCK)
+        this.bindTabEvent()
+        this.setActiveTab(TAB_NAMES.CLOCK)
     }
 
     setActiveTab(tabName) {
@@ -18,13 +18,13 @@ class TabView extends View {
         this.tabName = tabName
     }
 
-    bindClick() {
+    bindTabEvent() {
         for(const li of this.$tab) {
-            li.addEventListener('click', e => this.onClick(li.innerHTML))
+            li.addEventListener('click', e => this.onClickTab(li.innerHTML))
         }
     }
 
-    onClick(tabName) {
+    onClickTab(tabName) {
         //탭변화 있으면
         if(this.tabName !== tabName) {
             this.setActiveTab(tabName)
