@@ -6,10 +6,8 @@ class WatchView extends View {
     constructor($target) {
         super()
         this.$element = $target
-        this.$watch = this.$element.querySelector('.watch')
-        this.$buttonGroup = this.$element.querySelector('.button_area')
-        // this.$buttonReset = this.$element.querySelector('.button_reset')
-        // this.$buttonRecord = this.$element.querySelector('.button_record')
+        this.$watch = this.$element.querySelector('#watch')
+        this.$buttonGroup = this.$element.querySelector('#buttonArea')
         this.$recordCount = this.createElement('strong', 'count')
         this.$recordList = this.createElement('ul', 'list')
         this.$element.append(this.$recordList, this.$recordCount)
@@ -34,22 +32,22 @@ class WatchView extends View {
 
     bindDeleteEvent () {
         //삭제버튼
-        this.$recordList.addEventListener('click', e => e.target.className === 'button_delete' && this.onDeleteRecord(e))
+        this.$recordList.addEventListener('click', e => e.target.id === 'buttonDelete' && this.onDeleteRecord(e))
     }
 
     //초기화
     onReset() {
-        this.emit('@reset') // broadcast the event '@reset'
+        this.emit('@RESET') // broadcast the event '@reset'
     }
 
     //기록
     onAddRecord() {
-        this.emit('@click', { time: this.$watch.innerHTML })
+        this.emit('@CLICK', { time: this.$watch.innerHTML })
     }
 
     //삭제
     onDeleteRecord(e) {
-        this.emit('@delete', { id: Number(e.toElement.parentNode.id) }) 
+        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) 
 
         // 언바인딩
         this.$recordList.removeEventListener('click', e => this.onDeleteRecord(e))
@@ -92,6 +90,7 @@ class WatchView extends View {
             $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}.${item.time.msec}`
 
             const $button = this.createElement('button', 'button_delete')
+            $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
             
             $li.append($span, $button)

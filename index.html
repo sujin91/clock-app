@@ -10,36 +10,36 @@
     <div class="container">
         <h1 class="title">Clock App</h1>
 
-        <div class="tab_area">
+        <div id="tabArea" class="tab_area">
             <ul id="tabs" class="tab_list">
                 <li>시계</li>
                 <li>알람</li>
                 <li>스톱워치</li>
             </ul>
         </div>
-        <div class="clock_area">
-            <strong class="clock">00:00:00</strong>
+        <div id="clockArea" class="clock_area">
+            <strong id="clock" class="clock">00:00:00</strong>
         </div>
 
-        <div class="alarm_area">
-            <form class="form_section">
+        <div id="alarmArea" class="alarm_area">
+            <form id="formSection" class="form_section">
                 <div class="input_area">
-                    <input type="text" class="input" maxlength="8" placeholder="hh:mm:ss" value="00:00:00">
+                    <input type="text" id="inputAlarm" class="input" maxlength="8" placeholder="hh:mm:ss" value="00:00:00">
                 </div>
-                <div class="button_area">
-                    <button type="button" class="button button_getTime">현재 시간</button>
-                    <button type="submit" class="button button_addAlarm">등록</button>
+                <div id="buttonArea" class="button_area">
+                    <button type="button" id="buttonGetTime" class="button button_get_time">현재 시간</button>
+                    <button type="submit" id="buttonAddAlarm" class="button button_add_alarm">등록</button>
                 </div>
             </form>
 
         </div>
 
-        <div class="watch_area">
+        <div id="watchArea" class="watch_area">
             <div class="watch_section">
-                <strong class="watch">00:00:00</strong>
-                <div class="button_area">
-                    <button type="button" class="button button_reset">초기화</button>
-                    <button type="button" class="button button_record">기록</button>
+                <strong id="watch" class="watch">00:00:00</strong>
+                <div id="buttonArea" class="button_area">
+                    <button type="button" id="buttonReset" class="button button_reset">초기화</button>
+                    <button type="button" id="buttonRecord" class="button button_record">기록</button>
                 </div>
             </div>
         </div>

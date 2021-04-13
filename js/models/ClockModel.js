@@ -7,9 +7,10 @@ class ClockModel extends Observable {
     }
 
     setClock() {
+        const dataObj = new Date()
         this.clock = {
-            date: new Date().getDate(),
-            hour: new Date().getHours(),
+            date: dataObj.getDate(),
+            hour: dataObj.getHours(),
             // hour: Math.floor(Date.now() / 1000 / 60 / 24) % 60,
             min: Math.floor(Date.now() / 1000 / 60) % 60,
             sec: Math.floor(Date.now() / 1000) % 60

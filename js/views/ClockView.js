@@ -5,7 +5,7 @@ class ClockView extends View {
     constructor($target) {
         super()
         this.$element = $target
-        this.$clock = this.$element.querySelector('.clock')
+        this.$clock = this.$element.querySelector('#clock')
     }
 
     // 시계 렌더

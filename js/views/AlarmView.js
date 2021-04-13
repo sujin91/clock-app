@@ -9,14 +9,13 @@ class AlarmView extends View {
     constructor($target) {
         super()        
         this.$element = $target
-        this.$form = this.$element.querySelector('.form_section')
-        this.$inputEl = this.$form.querySelector('.input')
-        this.$buttonGetTime = this.$form.querySelector('.button_getTime')
-        this.$buttonAddAlarm = this.$form.querySelector('.button_addAlarm')
+        this.$form = this.$element.querySelector('#formSection')
+        this.$input = this.$form.querySelector('#inputAlarm')
+        this.$buttonGetTime = this.$form.querySelector('#buttonGetTime')
+        this.$buttonAddAlarm = this.$form.querySelector('#buttonAddAlarm')
         this.$alarmCount = this.createElement('strong', 'count')
         this.$alarmList = this.createElement('ul', 'list')
 
-        
         this.$element.append(this.$alarmList, this.$alarmCount)
 
         this.bindEvents()
@@ -28,49 +27,49 @@ class AlarmView extends View {
         this.$buttonGetTime.addEventListener('click', e => this.onClickGetTime())
 
         // 키보드처리, 콜론자동완성
-        this.$inputEl.addEventListener('keydown', e => this.onKeyDown(e))
+        this.$input.addEventListener('keydown', e => this.onKeyDown(e))
 
-        this.$inputEl.addEventListener('input', e => this.onInput(e))
+        this.$input.addEventListener('input', e => this.onInput(e))
 
         // 등록버튼
         this.$form.addEventListener('submit', e => {
             e.preventDefault()
-            this.onClickAddAlarm(this.$inputEl)
+            this.onClickAddAlarm(this.$input)
         })
     }
 
     bindDeleteEvent () {
         //삭제버튼
-        this.$alarmList.addEventListener('click', e => e.target.className === 'button_delete' && this.onDeleteAlarm(e))
+        this.$alarmList.addEventListener('click', e => e.target.id === 'buttonDelete' && this.onDeleteAlarm(e))
     }
 
     onInput(e) {
         this.regex = /[^0-9:]/gi //숫자 + 콜론 정규식
-        this.$inputEl.value = this.$inputEl.value.replace(this.regex, '')
+        this.$input.value = this.$input.value.replace(this.regex, '')
 
-        if( (!this.backSpaceMode && (this.$inputEl.value.length === 2 || this.$inputEl.value.length === 5))) {
-            this.$inputEl.value = `${this.$inputEl.value}:`
+        if( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
+            this.$input.value = `${this.$input.value}:`
         }
 
-        this.inputAlarm = this.$inputEl.value.split(':')//.map(Number)
+        this.inputAlarm = this.$input.value.split(':')//.map(Number)
 
         console.log(this.inputAlarm)
 
 
         if (Number(this.inputAlarm[0]) > 23) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.HOUR_FORMAT)
+            MessageView(document.querySelector('#alarm_area'), 'warning', Message.HOUR_FORMAT)
             this.inputAlarm.splice(0);
-            this.$inputEl.value = this.inputAlarm.join(':')
+            this.$input.value = this.inputAlarm.join(':')
         }
         if (Number(this.inputAlarm[1]) > 59) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.MIN_FORMAT)
+            MessageView(document.querySelector('#alarm_area'), 'warning', Message.MIN_FORMAT)
             this.inputAlarm.splice(1);
-            this.$inputEl.value = this.inputAlarm.join(':')+':'
+            this.$input.value = this.inputAlarm.join(':')+':'
         }
         if (Number(this.inputAlarm[2]) > 59) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', Message.SEC_FORMAT)
+            MessageView(document.querySelector('#alarm_area'), 'warning', Message.SEC_FORMAT)
             this.inputAlarm.splice(2);
-            this.$inputEl.value = this.inputAlarm.join(':')+':'
+            this.$input.value = this.inputAlarm.join(':')+':'
         } 
     }
     
@@ -96,19 +95,19 @@ class AlarmView extends View {
 
     // 현재시간
     onClickGetTime() {
-        this.$inputEl.focus()
-        this.emit('@click')
+        this.$input.focus()
+        this.emit('@CLICK')
     }
 
     // 등록
     onClickAddAlarm() {
-        this.$inputEl.focus()
-        this.emit('@submit', {input: this.$inputEl.value})
+        this.$input.focus()
+        this.emit('@SUBMIT', {input: this.$input.value})
     }
 
     // 삭제
     onDeleteAlarm(e) {
-        this.emit('@delete', {id: e.toElement.parentNode.id})
+        this.emit('@DELETE', {id: e.toElement.parentNode.id})
 
         // 언바인딩
         this.$alarmList.removeEventListener('click', e => this.onDeleteAlarm(e))
@@ -121,7 +120,7 @@ class AlarmView extends View {
         const min = String(currentTime.min).padStart(2, "0")
         const sec = String(currentTime.sec).padStart(2, "0")
 
-        this.$inputEl.value = `${hour}:${min}:${sec}`
+        this.$input.value = `${hour}:${min}:${sec}`
     }
 
     // 알람목록 렌더
@@ -142,6 +141,7 @@ class AlarmView extends View {
             item.state === State.ACTIVE && $span.style.setProperty('color', Color.RED)
             
             const $button = this.createElement('button', 'button_delete')
+            $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
             
             $li.append($span, $button)

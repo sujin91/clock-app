@@ -4,6 +4,6 @@ export function MessageView($target, className, text) {
     $message.className = className
 
     //존재하면 삭제
-    $target.querySelector(`.button_area .${className}`)?.remove()
-    $target.querySelector(`.button_area`).append($message)
+    $target.querySelector(`#buttonArea .${className}`)?.remove()
+    $target.querySelector(`#buttonArea`).append($message)
 }

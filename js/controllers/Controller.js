@@ -21,10 +21,10 @@ class Controller extends Observable {
         this.alarmModel = new AlarmModel()
         this.watchModel = new WatchModel()
 
-        this.tabView = new TabView(document.querySelector('.tab_area'))
-        this.alarmView = new AlarmView(document.querySelector('.alarm_area'))
-        this.clockView = new ClockView(document.querySelector('.clock_area'))
-        this.watchView = new WatchView(document.querySelector('.watch_area'))
+        this.tabView = new TabView(document.querySelector('#tabArea'))
+        this.alarmView = new AlarmView(document.querySelector('#alarmArea'))
+        this.clockView = new ClockView(document.querySelector('#clockArea'))
+        this.watchView = new WatchView(document.querySelector('#watchArea'))
 
         this.clockModel.register('@CLOCK', this.handleClock, this)
         this.alarmModel.register('@ALARM', this.handleAlarm, this)
@@ -32,19 +32,19 @@ class Controller extends Observable {
 
         // 탭
         this.tabView
-            .on('@change', e => this.onChangeTab(e.detail.tabName))
+            .on('@CHANGE', e => this.onChangeTab(e.detail.tabName))
 
         // 알람
         this.alarmView
-            .on('@click', e => this.onGetTime())
-            .on('@submit', e => this.onAddAlarm(e.detail.input))
-            .on('@delete', e => this.onDeleteAlarm(e.detail.id))
+            .on('@CLICK', e => this.onGetTime())
+            .on('@SUBMIT', e => this.onAddAlarm(e.detail.input))
+            .on('@DELETE', e => this.onDeleteAlarm(e.detail.id))
             
         // 스탑워치
         this.watchView
-            .on('@reset', e => this.onResetTimerWatch())
-            .on('@click', e => this.onAddRecord(e.detail.time))
-            .on('@delete', e => this.onDeleteRecord(e.detail.id))
+            .on('@RESET', e => this.onResetTimerWatch())
+            .on('@CLICK', e => this.onAddRecord(e.detail.time))
+            .on('@DELETE', e => this.onDeleteRecord(e.detail.id))
 
         // 처음 화면 렌더링
         this.clockView.hide()
@@ -130,11 +130,11 @@ class Controller extends Observable {
         const isErrorText = this.alarmModel.isError(time)
         
         if(isErrorText) {
-            MessageView(document.querySelector('.alarm_area'), 'warning', isErrorText)
+            MessageView(document.querySelector('#alarmArea'), 'warning', isErrorText)
         } else {
             this.alarmModel.add(time)
             this.alarmView.renderList(this.alarmModel.list())
-            MessageView(document.querySelector('.alarm_area'), 'success', Message.SUCCESS)
+            MessageView(document.querySelector('#alarmArea'), 'success', Message.SUCCESS)
         }
         
     }
@@ -173,7 +173,7 @@ class Controller extends Observable {
     onAddRecord(time) {
         // 초기화 안됐을 때
         if (!this.isInit) {
-            MessageView(document.querySelector('.watch_area'), 'warning', Message.INIT)
+            MessageView(document.querySelector('#watchArea'), 'warning', Message.INIT)
 
             return
         }
@@ -189,7 +189,7 @@ class Controller extends Observable {
         this.watchModel.stopWatch()
         this.watchModel.add(time)
         this.watchView.renderList(this.watchModel.list())
-        MessageView(document.querySelector('.watch_area'), 'success', Message.SUCCESS)
+        MessageView(document.querySelector('#watchArea'), 'success', Message.SUCCESS)
         this.isStop = true
     }
 

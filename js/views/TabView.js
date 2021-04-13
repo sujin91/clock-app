@@ -5,7 +5,7 @@ class TabView extends View {
     constructor($target) {
         super()
         this.$element = $target
-        this.$tab = this.$element.querySelectorAll('.tab_list li')
+        this.$tab = this.$element.querySelectorAll('#tabs li')
 
         this.bindClick()
         this.setActiveTab(TabNames.CLOCK)
@@ -13,7 +13,7 @@ class TabView extends View {
 
     setActiveTab(tabName) {
         for(const li of this.$tab) {
-            li.className = li.innerHTML === tabName ?  'active' : ''
+            li.className = li.innerHTML === tabName ? 'active' : ''
         }
         this.tabName = tabName
     }
@@ -28,7 +28,7 @@ class TabView extends View {
         //탭변화 있으면
         if(this.tabName !== tabName) {
             this.setActiveTab(tabName)
-            this.emit('@change', { tabName })
+            this.emit('@CHANGE', { tabName })
         }
     }
 }
