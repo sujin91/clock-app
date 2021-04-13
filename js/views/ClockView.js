@@ -1,6 +1,5 @@
 import View from './View.js'
 
-// 시계탭
 class ClockView extends View {
     constructor($target) {
         super()

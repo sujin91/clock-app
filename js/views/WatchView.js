@@ -1,6 +1,6 @@
-import { INIT_TIMESTAMP, BTN_DELETE, BTN_RESET, BTN_RECORD } from '../constants.js'
-
 import View from './View.js'
+
+import { INIT_TIMESTAMP, BTN_DELETE } from '../constants.js'
 
 class WatchView extends View {
     constructor($target) {

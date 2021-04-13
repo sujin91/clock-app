@@ -12,7 +12,8 @@ export const MESSAGE = {
     HOUR_FORMAT: '24시를 넘길 수 없습니다',
     MIN_FORMAT: '60분을 넘길 수 없습니다',
     SEC_FORMAT: '60초를 넘길 수 없습니다',
-    SUCCESS: '등록하였습니다.'
+    SUCCESS: '등록하였습니다.',
+    STORAGE_FAIL: 'localStorage를 사용할 수 없습니다.'
 }
 
 export const STATE = {
@@ -22,7 +23,7 @@ export const STATE = {
 }
 
 export const COLOR = {
-    RED: 'F00',
+    RED: '#F00',
     GRAY: '#888',
     BLACK: '#000'
 }
@@ -37,6 +38,7 @@ export const COLOR = {
 //     ARROW_RIGHT: 'ArrowRight',
 //     DELETE: 'Delete'
 // }
+
 export const BTN_GET_TIME = '현재시간'
 export const BTN_ADD = '등록'
 export const BTN_RESET = '초기화'

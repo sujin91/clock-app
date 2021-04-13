@@ -1,4 +1,5 @@
 import View from './View.js'
+
 import { TAB_NAMES } from '../constants.js'
 
 class TabView extends View {

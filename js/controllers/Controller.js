@@ -1,5 +1,3 @@
-import { TAB_NAMES } from '../constants.js'
-
 import ClockModel from '../models/ClockModel.js'
 import AlarmModel from '../models/AlarmModel.js'
 import WatchModel from '../models/WatchModel.js'
@@ -8,10 +6,11 @@ import TabView from '../views/TabView.js'
 import AlarmView from '../views/AlarmView.js'
 import ClockView from '../views/ClockView.js'
 import WatchView from '../views/WatchView.js'
+import Observable from '../utils/Observable.js'
 import { MessageView } from '../views/MessageView.js'
 
+import { TAB_NAMES } from '../constants.js'
 import { MESSAGE } from '../constants.js'
-import Observable from '../utils/Observable.js'
 
 class Controller extends Observable {
     constructor() {

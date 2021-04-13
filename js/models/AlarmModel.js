@@ -1,6 +1,6 @@
+import ClockModel from './ClockModel.js'
 import { MESSAGE, STATE } from '../constants.js'
 import { Storage } from '../utils/Storage.js'
-import ClockModel from './ClockModel.js'
 
 class AlarmModel extends ClockModel {
     constructor() {
@@ -85,7 +85,6 @@ class AlarmModel extends ClockModel {
 
     setTimer() {
         this.timer = setInterval(() => {
-            // this.setClock()
             this.changeState()
             this.notify('@ALARM', this.alarms)
         }, 1000)

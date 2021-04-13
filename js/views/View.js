@@ -17,7 +17,6 @@ export default class View {
         return this
     }
 
-    // 요소 노출,숨김
     hide() {
         this.$element.style.setProperty(`display`, `none`)
         return this

@@ -1,7 +1,7 @@
+import View from './View.js'
+
 import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../constants.js'
 import { MessageView } from './MessageView.js'
-
-import View from './View.js'
 
 // 알람 탭
 class AlarmView extends View {
@@ -15,7 +15,6 @@ class AlarmView extends View {
         this.$alarmList = this.createElement('ul', 'list')
 
         this.$element.append(this.$alarmList, this.$alarmCount)
-
         this.bindEvents()
     }
 
@@ -35,11 +34,12 @@ class AlarmView extends View {
         this.regex = /[^0-9:]/gi // 숫자 + 콜론 정규식
         this.$input.value = this.$input.value.replace(this.regex, '')
 
+        // 콜론 생성
         if( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
             this.$input.value = `${this.$input.value}:`
         }
 
-        this.inputAlarm = this.$input.value.split(':')//.map(Number)
+        this.inputAlarm = this.$input.value.split(':')
 
         if (Number(this.inputAlarm[0]) > 23) {
             MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.HOUR_FORMAT)
@@ -83,14 +83,14 @@ class AlarmView extends View {
         this.emit('@CLICK')
     }
 
-    onSubmitAlarm = (e) => {
+    onSubmitAlarm = e => {
         e.preventDefault()
         this.$alarmList.childElementCount === 0 && this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
         this.$input.focus()
         this.emit('@ADD', {input: this.$input.value})
     }
 
-    onDeleteAlarm = (e) => {
+    onDeleteAlarm = e => {
         e.target.id === 'buttonDelete' && this.emit('@DELETE', {id: e.toElement.parentNode.id})
         this.$alarmList.firstChild === null && this.destroy('click', this.$alarmList, this.onDeleteAlarm)
     }

@@ -1,4 +1,4 @@
-import { NAMESPACE } from '../constants.js'
+import { NAMESPACE, MESSAGE } from '../constants.js'
 
 export const Storage = {
     get: key => {
@@ -7,10 +7,8 @@ export const Storage = {
             return data
         }
         catch (err) {
-            
+            throw MESSAGE.STORAGE_FAIL
         }
     },
-    set: (key, value) => {
-        localStorage.setItem(`${NAMESPACE}${key}`, JSON.stringify(value))
-    }
+    set: (key, value) => localStorage.setItem(`${NAMESPACE}${key}`, JSON.stringify(value)),
 }

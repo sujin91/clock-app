@@ -8,10 +8,10 @@
 ### 추가구현 해볼만한 사항
 - [ ] 일괄삭제/선택삭제 버튼
 - [ ] active 알람 깜빡이게
+- [ ] 이런거 할시간이 없을듯
 
 ## TODO
 - [x] observer 작성하기
-- [ ] handle로 이름바꿀까
 - [x] es6 함수 활용할게있나..찾기
   - [x] some
   - [x] for .. of
@@ -19,5 +19,5 @@
   - [x] optional chaining
   - [x] padStart 
 - [x] KeyCode -> Key 교체
-- [ ] 언바인딩
+- [x] 언바인딩
 - [x] input 유효성검사수정
