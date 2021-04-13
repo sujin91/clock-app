@@ -42,17 +42,17 @@ class AlarmView extends View {
         this.inputAlarm = this.$input.value.split(':')//.map(Number)
 
         if (Number(this.inputAlarm[0]) > 23) {
-            MessageView(document.querySelector('#alarm_area'), 'warning', MESSAGE.HOUR_FORMAT)
+            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.HOUR_FORMAT)
             this.inputAlarm.splice(0);
             this.$input.value = this.inputAlarm.join(':')
         }
         if (Number(this.inputAlarm[1]) > 59) {
-            MessageView(document.querySelector('#alarm_area'), 'warning', MESSAGE.MIN_FORMAT)
+            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.MIN_FORMAT)
             this.inputAlarm.splice(1);
             this.$input.value = this.inputAlarm.join(':')+':'
         }
         if (Number(this.inputAlarm[2]) > 59) {
-            MessageView(document.querySelector('#alarm_area'), 'warning', MESSAGE.SEC_FORMAT)
+            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.SEC_FORMAT)
             this.inputAlarm.splice(2);
             this.$input.value = this.inputAlarm.join(':')+':'
         } 
