@@ -1,6 +1,6 @@
-import Observable from '../utils/Observable.js'
+import EventEmitter from '../utils/EventEmmiter.js'
 
-class ClockModel extends Observable {
+class ClockModel extends EventEmitter {
     constructor() {
         super()
         this.clock = {}
@@ -11,7 +11,6 @@ class ClockModel extends Observable {
         this.clock = {
             date: dataObj.getDate(),
             hour: dataObj.getHours(),
-            // hour: Math.floor(Date.now() / 1000 / 60 / 24) % 60,
             min: Math.floor(Date.now() / 1000 / 60) % 60,
             sec: Math.floor(Date.now() / 1000) % 60
         }
@@ -29,15 +28,13 @@ class ClockModel extends Observable {
     setTimer() {
         this.timer = setInterval(() => {
             this.setClock()
-            this.notify('@CLOCK', this.clock)
+            this.emit('@TIMER', this.clock)
         }, 1000)
-
-        return true
     }
 
     clearTimer() {
         clearInterval(this.timer)
-        return false
+        return false //타이머가 삭제되었다고 Flag로 전달함
     }
 }
 

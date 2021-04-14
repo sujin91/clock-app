@@ -1,4 +1,6 @@
 import ClockModel from './ClockModel.js'
+import EventEmitter from '../utils/EventEmmiter.js'
+
 import { MESSAGE, STATE } from '../constants.js'
 import { Storage } from '../utils/Storage.js'
 
@@ -57,7 +59,6 @@ class AlarmModel extends ClockModel {
         const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
         const inputSeconds = this.getSeconds(hour, min, sec)
 
-        
         // 시간형식에 맞는지 확인
         if(inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
             return MESSAGE.EMPTY
@@ -86,13 +87,13 @@ class AlarmModel extends ClockModel {
     setTimer() {
         this.timer = setInterval(() => {
             this.changeState()
-            this.notify('@ALARM', this.alarms)
+            this.emit('@TIMER', this.alarms)
         }, 1000)
     }
 
     clearTimer() {
         clearInterval(this.timer)
-        return false
+        return false //타이머가 삭제되었다고 Flag로 전달함
     }
 }
 

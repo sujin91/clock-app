@@ -1,7 +1,7 @@
-import Observable from '../utils/Observable.js'
+import EventEmitter from '../utils/EventEmmiter.js'
 import { Storage } from '../utils/Storage.js'
 
-class WatchModel extends Observable{
+class WatchModel extends EventEmitter {
     constructor() {
         super()
         this.records = []
@@ -60,7 +60,7 @@ class WatchModel extends Observable{
     setTimer() {
         this.watchTimer = setInterval( () => {
             this.watchTime = Date.now() - this.startTime
-            this.notify('@WATCH', this.watchTime)
+            this.emit('@TIMER', this.watchTime)
         }, 1)
     }
 

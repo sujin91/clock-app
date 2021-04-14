@@ -8,16 +8,14 @@ import ClockView from '../views/ClockView.js'
 import WatchView from '../views/WatchView.js'
 import MessageView from '../views/MessageView.js'
 
-import Observable from '../utils/Observable.js'
 import { TAB_NAMES } from '../constants.js'
 import { MESSAGE } from '../constants.js'
 
-class Controller extends Observable {
+class Controller {
     constructor() {
-        super()
         this.clockModel = new ClockModel()
         this.alarmModel = new AlarmModel()
-        this.watchModel = new WatchModel()
+        this.watchModel = new WatchModel(document.querySelector('#watchArea .watch'))
 
         this.tabView = new TabView(document.querySelector('#tabArea'))
         this.alarmView = new AlarmView(document.querySelector('#alarmArea'))
@@ -25,9 +23,14 @@ class Controller extends Observable {
         this.watchView = new WatchView(document.querySelector('#watchArea'))
         this.messageView = new MessageView()
 
-        this.clockModel.register('@CLOCK', this.handleClock, this)
-        this.alarmModel.register('@ALARM', this.handleAlarm, this)
-        this.watchModel.register('@WATCH', this.handleWatch, this)
+        this.clockModel
+            .on('@TIMER', this.handleClock)
+
+        this.alarmModel
+            .on('@TIMER', this.handleAlarm)
+
+        this.watchModel
+            .on('@TIMER', this.handleWatch)
 
         this.tabView
             .on('@CHANGE', e => this.onChangeTab(e.detail.tabName))
@@ -52,15 +55,15 @@ class Controller extends Observable {
         this.onChangeTab(TAB_NAMES.CLOCK)
     }
 
-    handleClock(clock) {
+    handleClock = (clock) => {
         this.clockView.render(clock)
     }
 
-    handleAlarm(list) {
+    handleAlarm = (list) => {
         this.alarmView.renderList(list)
     }
 
-    handleWatch(watch) {
+    handleWatch = (watch) => {
         this.watchView.renderStopWatch(watch)
     }
 
@@ -90,12 +93,12 @@ class Controller extends Observable {
             this.clockView.show()
             this.watchView.hide()
 
-            if(!this.clockFlag) {
+            if (!this.clockFlag) {
                 this.clockModel.setTimer()
                 this.clockFlag = true
             }
 
-            if(!this.alarmFlag) {
+            if (!this.alarmFlag) {
                 this.alarmModel.setTimer()
                 this.alarmFlag = true
             }
@@ -128,13 +131,15 @@ class Controller extends Observable {
         this.messageView.$element?.remove()
         const isErrorText = this.alarmModel.isError(time)
         
-        if(isErrorText) {
+        if (isErrorText) {
             this.messageView.render(document.querySelector('#formSection'), 'warning', isErrorText)
-        } else {
-            this.alarmModel.add(time)
-            this.alarmView.renderList(this.alarmModel.list())
-            this.messageView.render(document.querySelector('#formSection'), 'success', MESSAGE.SUCCESS)
+
+            return
         }
+
+        this.alarmModel.add(time)
+        this.alarmView.renderList(this.alarmModel.list())
+        this.messageView.render(document.querySelector('#formSection'), 'success', MESSAGE.SUCCESS)
     }
 
     // 삭제 버튼 처리
@@ -149,21 +154,24 @@ class Controller extends Observable {
         // 시계/알람타이머 정지
         this.clockFlag = this.clockModel.clearTimer()
         this.alarmFlag = this.alarmModel.clearTimer()
+
         // 기록목록 전체삭제
         this.watchModel.clear()
-        
+
         // 00:00:00 렌더
         this.watchView.renderReset()
-        this.clockView.hide()
-        // 기록 목록 랜더
         this.watchView.renderList(this.watchModel.list())
-        // 초기화 되었다는 플래그
+
+        // 초기화 플래그
         this.isInit = true
+
         // 기록 중에 초기화 누르면? 타이머정지
         this.watchModel.clearWatch()
         this.isStop = true
+
         //Message 존재하면 삭제
         this.messageView.$element?.remove()
+        this.clockView.hide()
     }
 
     // 기록 버튼 처리
@@ -176,7 +184,6 @@ class Controller extends Observable {
         }
         // 기록 시작할 때 (카운트 돔) 
         if (this.isStop) {
-            // this.startWatch() 
             this.watchModel.startWatch()
             this.isStop = false
 
