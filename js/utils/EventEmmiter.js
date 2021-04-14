@@ -10,21 +10,10 @@ export default class EventEmitter {
     }
 
     destroy(eventName, handler) {
-        if (this.events[eventName]) {
-            for (var ii = 0; ii < this.events[eventName].length; ii++) {
-                if (this.events[eventName][ii] === handler) {
-                    this.events[eventName].splice(ii, 1);
-                    break;
-                }
-            }
-        }
+        if (this.events[eventName]) this.events.filter(item => item.handler !== handler)
     }
 
     emit(eventName, data) {
-        if (this.events[eventName]) {
-            this.events[eventName].forEach(function(handler) {
-                handler(data);
-            });
-        }
-    };
+        if (this.events[eventName]) this.events[eventName].forEach( handler => handler(data))
+    }
 }

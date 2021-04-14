@@ -11,6 +11,7 @@ export const Storage = {
             return null
         }
     },
+
     set: function(key, value) {
         localStorage.setItem(`${NAMESPACE}${key}`, JSON.stringify(value))
     }

@@ -15,7 +15,7 @@ class Controller {
     constructor() {
         this.clockModel = new ClockModel()
         this.alarmModel = new AlarmModel()
-        this.watchModel = new WatchModel(document.querySelector('#watchArea .watch'))
+        this.watchModel = new WatchModel()
 
         this.tabView = new TabView(document.querySelector('#tabArea'))
         this.alarmView = new AlarmView(document.querySelector('#alarmArea'))

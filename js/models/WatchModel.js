@@ -50,9 +50,7 @@ class WatchModel extends EventEmitter {
         // 재시작으로 카운트 될 때 (endTime 확인)
         if(this.endTime > 0) this.startTime += Date.now() - this.endTime
         // 처음 눌려서 카운트 될 때 
-        else {
-            this.startTime = Date.now() 
-        }
+        else this.startTime = Date.now() 
 
         this.setTimer()
     }

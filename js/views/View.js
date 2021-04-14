@@ -1,6 +1,6 @@
 import EventEmitter from "../utils/EventEmmiter.js"
 
-// View에서는 customEvent로 대체
+// View에서는 customEvent로 교체할 수 있음
 export default class View extends EventEmitter {
     constructor() {
         super()
