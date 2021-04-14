@@ -1,4 +1,4 @@
-import { NAMESPACE, MESSAGE } from '../constants.js'
+import { NAMESPACE, MESSAGE } from '../Constants.js'
 
 export const Storage = {
     get: function(key) {

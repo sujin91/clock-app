@@ -1,7 +1,6 @@
 import ClockModel from './ClockModel.js'
-import EventEmitter from '../utils/EventEmmiter.js'
 
-import { MESSAGE, STATE } from '../constants.js'
+import { MESSAGE, STATE } from '../Constants.js'
 import { Storage } from '../utils/Storage.js'
 
 class AlarmModel extends ClockModel {
@@ -43,11 +42,11 @@ class AlarmModel extends ClockModel {
 
         this.alarms.forEach( item => {
             // 알람 state Change
-            if(item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = STATE.ACTIVE
-            else if(item.seconds - currentSeconds < 0 ) item.state = STATE.EXPIRED
+            if (item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = STATE.ACTIVE
+            else if (item.seconds - currentSeconds < 0 ) item.state = STATE.EXPIRED
 
             // 자정 Change
-            if(item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
+            if (item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
         })
         this._commit(this.alarms)
     }
@@ -60,17 +59,14 @@ class AlarmModel extends ClockModel {
         const inputSeconds = this.getSeconds(hour, min, sec)
 
         // 시간형식에 맞는지 확인
-        if(inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
+        if (inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
             return MESSAGE.EMPTY
         }
         // 과거 시간인지 확인
-        if(inputSeconds - currentSeconds <= 0) {
-            return MESSAGE.PAST
-        }
+        if (inputSeconds - currentSeconds <= 0) return MESSAGE.PAST
         // 존재하는 알람인지 확인
-        if(this.alarms.some( item => item.seconds === inputSeconds )) {
-            return MESSAGE.EXIST
-        }
+        if (this.alarms.some( item => item.seconds === inputSeconds )) return MESSAGE.EXIST
+
         return false
     }
 
@@ -89,11 +85,12 @@ class AlarmModel extends ClockModel {
             this.changeState()
             this.emit('@TIMER', this.alarms)
         }, 1000)
+        return true //타이머가 실행되었다고 Flag(true)로 전달함
     }
 
     clearTimer() {
         clearInterval(this.timer)
-        return false //타이머가 삭제되었다고 Flag로 전달함
+        return false //타이머가 삭제되었다고 Flag(false)로 전달함
     }
 }
 

@@ -8,8 +8,8 @@ import ClockView from '../views/ClockView.js'
 import WatchView from '../views/WatchView.js'
 import MessageView from '../views/MessageView.js'
 
-import { TAB_NAMES } from '../constants.js'
-import { MESSAGE } from '../constants.js'
+import { TAB_NAMES } from '../Constants.js'
+import { MESSAGE } from '../Constants.js'
 
 class Controller {
     constructor() {
@@ -55,17 +55,9 @@ class Controller {
         this.onChangeTab(TAB_NAMES.CLOCK)
     }
 
-    handleClock = (clock) => {
-        this.clockView.render(clock)
-    }
-
-    handleAlarm = (list) => {
-        this.alarmView.renderList(list)
-    }
-
-    handleWatch = (watch) => {
-        this.watchView.renderStopWatch(watch)
-    }
+    handleClock = (clock) => this.clockView.render(clock)
+    handleAlarm = (list) => this.alarmView.renderList(list)
+    handleWatch = (watch) => this.watchView.renderStopWatch(watch)
 
     onChangeTab(tabName) {
         this.selectedTab = tabName
@@ -79,10 +71,7 @@ class Controller {
             this.alarmView.hide()
             this.watchView.hide()
 
-            if (!this.clockFlag) {
-                this.clockModel.setTimer()
-                this.clockFlag = true
-            }
+            if (!this.clockFlag) this.clockFlag = this.clockModel.setTimer()
         } 
         // 알람 탭
         else if (this.selectedTab === TAB_NAMES.ALARM) {
@@ -93,15 +82,8 @@ class Controller {
             this.clockView.show()
             this.watchView.hide()
 
-            if (!this.clockFlag) {
-                this.clockModel.setTimer()
-                this.clockFlag = true
-            }
-
-            if (!this.alarmFlag) {
-                this.alarmModel.setTimer()
-                this.alarmFlag = true
-            }
+            if (!this.clockFlag) this.clockFlag = this.clockModel.setTimer()
+            if (!this.alarmFlag) this.alarmFlag = this.alarmModel.setTimer()
         } 
         // 스탑워치 탭
         else  { 

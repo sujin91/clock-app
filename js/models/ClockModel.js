@@ -1,4 +1,4 @@
-import EventEmitter from '../utils/EventEmmiter.js'
+import EventEmitter from '../utils/EventEmitter.js'
 
 class ClockModel extends EventEmitter {
     constructor() {
@@ -30,11 +30,12 @@ class ClockModel extends EventEmitter {
             this.setClock()
             this.emit('@TIMER', this.clock)
         }, 1000)
+        return true //타이머가 실행되었다고 Flag(true)로 전달함
     }
 
     clearTimer() {
         clearInterval(this.timer)
-        return false //타이머가 삭제되었다고 Flag로 전달함
+        return false //타이머가 삭제되었다고 Flag(false)로 전달함
     }
 }
 

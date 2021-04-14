@@ -1,6 +1,6 @@
-import EventEmitter from "../utils/EventEmmiter.js"
+import EventEmitter from "../utils/EventEmitter.js"
 
-// View에서는 customEvent로 교체할 수 있음
+// View에서는 EventEmitter대신 CustomEvent로 Observer
 export default class View extends EventEmitter {
     constructor() {
         super()
@@ -12,15 +12,15 @@ export default class View extends EventEmitter {
         return this
     }
 
-    emit(eventName, data) {
-        const evt = new CustomEvent(eventName, { detail: data })
-        this.$element.dispatchEvent(evt)
-        return this
-    }
-
     // 언바인딩
     destroy(eventName, $element, handler) {
         $element.removeEventListener(eventName, handler)
+        return this
+    }
+
+    emit(eventName, data) {
+        const evt = new CustomEvent(eventName, { detail: data })
+        this.$element.dispatchEvent(evt)
         return this
     }
 
@@ -35,10 +35,11 @@ export default class View extends EventEmitter {
     }
 
     // 요소 생성
-    createElement(tag, className) {
+    createElement(tag, className, id) {
         const $element = document.createElement(tag)
         className && $element.classList.add(className)
-    
+        if(id) $element.id = id
+
         return $element
     }
 }

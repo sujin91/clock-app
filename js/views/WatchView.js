@@ -1,6 +1,6 @@
 import View from './View.js'
 
-import { INIT_TIMESTAMP, BTN_DELETE } from '../constants.js'
+import { INIT_TIMESTAMP, BTN_DELETE } from '../Constants.js'
 
 class WatchView extends View {
     constructor($target) {
@@ -54,7 +54,7 @@ class WatchView extends View {
     // 탭이동으로 인한 스톱워치 마지막 기록값 렌더
     renderLastWatch(records) {
         // 기록이 있으면
-        if(records.length > 0) {
+        if (records.length > 0) {
             let lastRecord = records[records.length - 1]
             this.$watch.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
 

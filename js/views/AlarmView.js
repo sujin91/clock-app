@@ -1,7 +1,7 @@
 import View from './View.js'
 import MessageView from '../views/MessageView.js'
 
-import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../constants.js'
+import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
 
 // 알람 탭
 class AlarmView extends View {
@@ -36,7 +36,7 @@ class AlarmView extends View {
         this.$input.value = this.$input.value.replace(this.regex, '')
 
         // 콜론 생성
-        if( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
+        if ( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
             this.$input.value = `${this.$input.value}:`
         }
 
