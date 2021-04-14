@@ -7,7 +7,8 @@ export const Storage = {
             return data
         }
         catch (err) {
-            throw MESSAGE.STORAGE_FAIL
+            console.log(MESSAGE.STORAGE_FAIL)
+            return null
         }
     },
     set: (key, value) => localStorage.setItem(`${NAMESPACE}${key}`, JSON.stringify(value)),

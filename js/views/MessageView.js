@@ -1,9 +1,15 @@
-export function MessageView($target, className, text) {
-    const $message = document.createElement('p')
-    $message.innerHTML = text
-    $message.className = className
+import View from './View.js'
 
-    //존재하면 삭제
-    $target.querySelector(`#buttonArea .${className}`)?.remove()
-    $target.querySelector(`#buttonArea`).append($message)
+class MessageView extends View {
+    constructor() {
+        super()        
+    }
+
+    render($target, className, text) {
+        this.$element = this.createElement('p')
+        this.$element.innerHTML = text
+        this.$element.className = className
+        $target.append(this.$element)
+    }
 }
+export default MessageView

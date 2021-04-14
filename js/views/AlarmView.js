@@ -1,7 +1,7 @@
 import View from './View.js'
+import MessageView from '../views/MessageView.js'
 
 import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../constants.js'
-import { MessageView } from './MessageView.js'
 
 // 알람 탭
 class AlarmView extends View {
@@ -13,8 +13,9 @@ class AlarmView extends View {
         this.$buttonGetTime = this.$form.querySelector('#buttonGetTime')
         this.$alarmCount = this.createElement('strong', 'count')
         this.$alarmList = this.createElement('ul', 'list')
-
         this.$element.append(this.$alarmList, this.$alarmCount)
+
+        this.message = new MessageView()
         this.bindEvents()
     }
 
@@ -40,19 +41,20 @@ class AlarmView extends View {
         }
 
         this.inputAlarm = this.$input.value.split(':')
+        this.message.$element?.remove()
 
-        if (Number(this.inputAlarm[0]) > 23) {
-            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.HOUR_FORMAT)
+        if (Number(this.inputAlarm[0]) > 23) {    
+            this.message.render(this.$input.parentNode, 'warning', MESSAGE.HOUR_FORMAT)
             this.inputAlarm.splice(0);
             this.$input.value = this.inputAlarm.join(':')
         }
         if (Number(this.inputAlarm[1]) > 59) {
-            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.MIN_FORMAT)
+            this.message.render(this.$input.parentNode, 'warning', MESSAGE.MIN_FORMAT)
             this.inputAlarm.splice(1);
             this.$input.value = this.inputAlarm.join(':')+':'
         }
         if (Number(this.inputAlarm[2]) > 59) {
-            MessageView(document.querySelector('#alarmArea'), 'warning', MESSAGE.SEC_FORMAT)
+            this.message.render(this.$input.parentNode, 'warning', MESSAGE.SEC_FORMAT)
             this.inputAlarm.splice(2);
             this.$input.value = this.inputAlarm.join(':')+':'
         } 
@@ -74,7 +76,6 @@ class AlarmView extends View {
             this.backSpaceMode = true
             return
         }
-        
         e.preventDefault()
     }
 
