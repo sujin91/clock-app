@@ -8,7 +8,7 @@ import ClockView from '../views/ClockView.js'
 import WatchView from '../views/WatchView.js'
 import MessageView from '../views/MessageView.js'
 
-import { TAB_NAMES } from '../Constants.js'
+import { TAB_NAMES, SAMPLE_JSON } from '../Constants.js'
 import { MESSAGE } from '../Constants.js'
 
 class Controller {
@@ -36,9 +36,10 @@ class Controller {
             .on('@CHANGE', e => this.onChangeTab(e.detail.tabName))
 
         this.alarmView
-            .on('@CLICK', e => this.onGetTime())
+            .on('@NOW', e => this.onGetTime())
             .on('@ADD', e => this.onAddAlarm(e.detail.input))
             .on('@DELETE', e => this.onDeleteAlarm(e.detail.id))
+            .on('@SAMPLE', e => this.onGetSample())
             
         this.watchView
             .on('@RESET', e => this.onResetTimerWatch())
@@ -105,6 +106,10 @@ class Controller {
     // 현재시간 버튼 처리
     onGetTime() {
         this.alarmView.renderTime(this.clockModel.getClock())
+    }
+
+    onGetSample() {
+        this.alarmModel.getFetchData(SAMPLE_JSON)
     }
 
     // 등록 버튼 처리

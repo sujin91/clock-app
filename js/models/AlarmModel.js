@@ -2,11 +2,19 @@ import ClockModel from './ClockModel.js'
 
 import { MESSAGE, STATE } from '../Constants.js'
 import { Storage } from '../utils/Storage.js'
+import { FetchData } from '../utils/FetchData.js'
 
 class AlarmModel extends ClockModel {
     constructor() {
         super()
         this.alarms = Storage.get('alarms')
+    }
+
+    // 샘플 데이터 Fetch
+    getFetchData = async (PATH) => {
+        this.alarms = await FetchData(PATH)
+        //fetch 못하면 데이터 없는 상태로 시작
+        this.setState(this.alarms ? this.alarms : [])
     }
 
     // 리스트 가져오기
@@ -36,7 +44,7 @@ class AlarmModel extends ClockModel {
     }
 
     // '초'에 따른 State 변화
-    changeState() {
+    setState() {
         const currentTime = this.getClock()
         const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
 
@@ -82,7 +90,7 @@ class AlarmModel extends ClockModel {
 
     setTimer() {
         this.timer = setInterval(() => {
-            this.changeState()
+            this.setState()
             this.emit('@TIMER', this.alarms)
         }, 1000)
         return true //타이머가 실행되었다고 Flag(true)로 전달함

@@ -32,13 +32,15 @@ class WatchView extends View {
     onReset = () => this.emit('@RESET') // broadcast the event '@RESET'
     
     onAddRecord = () => {
+        //리스트가 생성되면 다시 이벤트 바인딩
         this.$recordList.childElementCount === 0 && this.$recordList.addEventListener('click', this.onDeleteRecord)  
         this.emit('@ADD', { time: this.$watch.innerHTML })
     }
 
     onDeleteRecord = e => {
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+        //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
         this.$recordList.firstChild === null && this.destroy('click', this.$recordList, this.onDeleteRecord)
+        e.target.id === 'buttonDelete' && this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
     }
 
     // 스톱워치 시계 렌더

@@ -49,6 +49,7 @@
         - `on()`: 감지에 연결될 handler 등록
         - `destroy()`: 감지에 등록된 handler 제거
         - `emit()`: 감지 발생시 broadcast
+    - `FetchData.js`: path의 data를 fetch함
     - `Storage.js`: window.localstorage를 get, set
 
 #### Contsant.js    

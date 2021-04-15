@@ -10,6 +10,7 @@ class AlarmView extends View {
         this.$element = $target
         this.$form = this.$element.querySelector('#formSection')
         this.$input = this.$form.querySelector('#inputAlarm')
+        this.$buttonGetSample = this.$form.querySelector('#buttonGetSample')
         this.$buttonGetTime = this.$form.querySelector('#buttonGetTime')
         this.$alarmCount = this.createElement('strong', 'count')
         this.$alarmList = this.createElement('ul', 'list')
@@ -23,6 +24,8 @@ class AlarmView extends View {
         // input, 키보드처리
         this.$input.addEventListener('keydown', this.onKeyDown)
         this.$input.addEventListener('input', this.onInput)
+        // sample 버튼
+        this.$buttonGetSample.addEventListener('click', this.onClickGetSample)
         // 현재시간버튼
         this.$buttonGetTime.addEventListener('click', this.onClickGetTime)
         // 등록버튼
@@ -81,19 +84,27 @@ class AlarmView extends View {
 
     onClickGetTime = () => {
         this.$input.focus()
-        this.emit('@CLICK')
+        this.emit('@NOW')
+    }
+
+    onClickGetSample = () => {
+        this.emit('@SAMPLE')
+        //리스트가 생성되면 다시 이벤트 바인딩
+        this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
     }
 
     onSubmitAlarm = e => {
         e.preventDefault()
+        //리스트가 생성되면 다시 이벤트 바인딩
         this.$alarmList.childElementCount === 0 && this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
         this.$input.focus()
         this.emit('@ADD', {input: this.$input.value})
     }
 
     onDeleteAlarm = e => {
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', {id: e.toElement.parentNode.id})
+        //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
         this.$alarmList.firstChild === null && this.destroy('click', this.$alarmList, this.onDeleteAlarm)
+        e.target.id === 'buttonDelete' && this.emit('@DELETE', {id: e.toElement.parentNode.id})
     }
 
     // 폼요소에 현재시각 렌더
@@ -107,7 +118,7 @@ class AlarmView extends View {
     }
 
     // 알람목록 렌더
-    renderList(list) {
+    renderList (list) {
         while (this.$alarmList.firstChild) {
             this.$alarmList.removeChild(this.$alarmList.firstChild)
         }
