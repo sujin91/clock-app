@@ -33,18 +33,19 @@ class WatchView extends View {
     
     onAddRecord = () => {
         //리스트가 생성되면 다시 이벤트 바인딩
-        this.$recordList.childElementCount === 0 && this.$recordList.addEventListener('click', this.onDeleteRecord)  
+        if(this.$recordList.childNodes.length === 0) this.$recordList.addEventListener('click', this.onDeleteRecord)  
         this.emit('@ADD', { time: this.$watch.innerHTML })
     }
 
     onDeleteRecord = e => {
         //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        this.$recordList.firstChild === null && this.destroy('click', this.$recordList, this.onDeleteRecord)
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+        if(this.$recordList.childNodes.length === 0) this.off('click', this.$recordList, this.onDeleteRecord)
+        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
     }
 
     // 스톱워치 시계 렌더
     renderStopWatch(watchTime) {
+        // 뺄수있나봅시다ㅏ
         this.hour = String(Math.floor(watchTime / 1000 / 60 / 60) % 60).padStart(2, "0")
         this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(2, "0")
         this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
@@ -62,8 +63,6 @@ class WatchView extends View {
 
             return
         } 
-        
-        this.renderReset()
     }
 
     // 스톱워치 기록 목록 렌더

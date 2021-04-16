@@ -1,7 +1,7 @@
 import View from './View.js'
 import MessageView from '../views/MessageView.js'
 
-import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
+import { WHITELIST, MESSAGE, BTN_DELETE, COLOR, STATE, REGEX_CHECK_NUMBER } from '../Constants.js'
 
 // 알람 탭
 class AlarmView extends View {
@@ -35,43 +35,39 @@ class AlarmView extends View {
     }
 
     onInput = e => {
-        this.regex = /[^0-9:]/gi // 숫자 + 콜론 정규식
-        this.$input.value = this.$input.value.replace(this.regex, '')
+        // 숫자 + 콜론 정규식
+        this.$input.value = this.$input.value.replace(REGEX_CHECK_NUMBER, '')
 
         // 콜론 생성
         if ( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
             this.$input.value = `${this.$input.value}:`
         }
 
-        this.inputAlarm = this.$input.value.split(':')
+        //isValidate, 
+        const [hour, min, sec] = this.$input.value.split(':')
         this.message.$element?.remove()
 
-        if (Number(this.inputAlarm[0]) > 23) {    
+        if (Number(hour) >= 24) {    
             this.message.render(this.$input.parentNode, 'warning', MESSAGE.HOUR_FORMAT)
-            this.inputAlarm.splice(0);
-            this.$input.value = this.inputAlarm.join(':')
+            this.$input.value = ''
         }
-        if (Number(this.inputAlarm[1]) > 59) {
+        if (Number(min) >= 60) {
             this.message.render(this.$input.parentNode, 'warning', MESSAGE.MIN_FORMAT)
-            this.inputAlarm.splice(1);
-            this.$input.value = this.inputAlarm.join(':')+':'
+            this.$input.value = `${hour}:`
         }
-        if (Number(this.inputAlarm[2]) > 59) {
+        if (Number(sec) >= 60) {
             this.message.render(this.$input.parentNode, 'warning', MESSAGE.SEC_FORMAT)
-            this.inputAlarm.splice(2);
-            this.$input.value = this.inputAlarm.join(':')+':'
+            this.$input.value = `${hour}:${min}:`
         } 
     }
     
     onKeyDown = e => {
         // 숫자&&주요키만 사용 가능
-        const whiteList = ['Control', 'Alt', 'Meta', 'ArrowLeft', 'ArrowRight', 'Enter', 'Tab', 'Home', 'End', 'Delete']
-
         if (Number(e.key) >= 0 && Number(e.key) < 10) {
             this.backSpaceMode = false
             return
         }
-        if (whiteList.some(code => e.code === code)) {
+        if (WHITELIST.some(code => e.code === code)) {
             this.backSpaceMode = false
             return
         }
@@ -96,33 +92,38 @@ class AlarmView extends View {
     onSubmitAlarm = e => {
         e.preventDefault()
         //리스트가 생성되면 다시 이벤트 바인딩
-        this.$alarmList.childElementCount === 0 && this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
+        if(this.$alarmList.childNodes.length === 0) this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
         this.$input.focus()
         this.emit('@ADD', {input: this.$input.value})
+        this.$input.value = ''
     }
 
     onDeleteAlarm = e => {
         //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        this.$alarmList.firstChild === null && this.destroy('click', this.$alarmList, this.onDeleteAlarm)
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', {id: e.toElement.parentNode.id})
+        if(this.$alarmList.childNodes.length === 0) this.off('click', this.$alarmList, this.onDeleteAlarm)
+        if(e.target.id === 'buttonDelete') this.emit('@DELETE', {id: e.toElement.parentNode.id})
     }
 
     // 폼요소에 현재시각 렌더
     renderTime(currentTime) {
+        const { hour, min, sec } = currentTime
         // 문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
-        const hour = String(currentTime.hour).padStart(2, "0") 
-        const min = String(currentTime.min).padStart(2, "0")
-        const sec = String(currentTime.sec).padStart(2, "0")
+        const hourValue = String(hour).padStart(2, "0") 
+        const minValue = String(min).padStart(2, "0")
+        const secValue = String(sec).padStart(2, "0")
 
-        this.$input.value = `${hour}:${min}:${sec}`
+        this.$input.value = `${hourValue}:${minValue}:${secValue}`
     }
 
     // 알람목록 렌더
     renderList (list) {
+        //유틸로 빼보자 지우는거 
         while (this.$alarmList.firstChild) {
             this.$alarmList.removeChild(this.$alarmList.firstChild)
         }
 
+
+        //map
         list.forEach(item => {
             const $li = this.createElement('li')
             $li.id = item.seconds

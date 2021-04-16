@@ -9,6 +9,7 @@ class MessageView extends View {
         this.$element = this.createElement('p')
         this.$element.innerHTML = text
         this.$element.className = className
+        
         $target.append(this.$element)
     }
 }

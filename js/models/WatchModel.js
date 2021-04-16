@@ -8,7 +8,7 @@ class WatchModel extends EventEmitter {
     }
 
     // 리스트 가져오기
-    list() {
+    getList() {
         return this.records
     }
 
@@ -29,6 +29,7 @@ class WatchModel extends EventEmitter {
         this._commit(this.records)
     }
 
+
     // 리스트 전체 비우기
     clear() {
         this.records = []
@@ -37,12 +38,12 @@ class WatchModel extends EventEmitter {
 
     // 리스트 요소 삭제
     delete(id) {
-        this.records = this.records.filter( item => item.id !== id)
+        this.records = this.records.filter(item => item.id !== id)
         this._commit(this.records)
     }
 
     _commit(records) {
-        Storage.set('records', records)
+        Storage.set('RECORDS', records)
     }
 
     // 스톱워치 시작

@@ -11,12 +11,14 @@ export default class EventEmitter {
     }
 
     // this.events 배열에서 해당 handler 삭제
-    destroy(eventName, handler) {
+    off(eventName, handler) {
         if (this.events[eventName]) this.events.filter(item => item.handler !== handler)
     }
 
     // broadCast
     emit(eventName, data) {
         if (this.events[eventName]) this.events[eventName].forEach( handler => handler(data))
+        //map으로 바꾸자
+
     }
 }

@@ -5,15 +5,15 @@ import { TAB_NAMES } from '../Constants.js'
 class TabView extends View {
     constructor($target) {
         super()
+        const DEFAULT_TAB = TAB_NAMES.CLOCK;
         this.$element = $target
         this.$tabList = this.createElement('ul', 'tab_list', 'tabs')
         this.$element.append(this.$tabList)
-        
         this.tabList = [TAB_NAMES.CLOCK, TAB_NAMES.ALARM, TAB_NAMES.STOPWATCH]
 
         this.render(this.tabList)
         this.bindEvent()
-        this.setActiveTab(TAB_NAMES.CLOCK)
+        this.setActiveTab(DEFAULT_TAB)
     }
 
     setActiveTab(tabName) {
@@ -42,7 +42,6 @@ class TabView extends View {
         tabList.forEach(item => {
             const $li = this.createElement('li')
             $li.innerHTML = item
-
             this.$tabList.append($li)
         })
     }

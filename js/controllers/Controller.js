@@ -77,7 +77,7 @@ class Controller {
         // 알람 탭
         else if (this.selectedTab === TAB_NAMES.ALARM) {
             this.clockView.render(this.clockModel.getClock())
-            this.alarmView.renderList(this.alarmModel.list())
+            this.alarmView.renderList(this.alarmModel.getList())
 
             this.alarmView.show()
             this.clockView.show()
@@ -96,7 +96,7 @@ class Controller {
             // 스톱워치 기록 존재 || 초기화 눌렀으면 clockView hide
             if (this.watchModel.records.length > 0 || this.isInit === true) {
                 this.clockView.hide()
-                this.watchView.renderLastWatch(this.watchModel.list())
+                this.watchView.renderLastWatch(this.watchModel.getList())
                 this.clockFlag = this.clockModel.clearTimer()
             }
         }
@@ -125,14 +125,14 @@ class Controller {
         }
 
         this.alarmModel.add(time)
-        this.alarmView.renderList(this.alarmModel.list())
+        this.alarmView.renderList(this.alarmModel.getList())
         this.messageView.render(document.querySelector('#formSection'), 'success', MESSAGE.SUCCESS)
     }
 
     // 삭제 버튼 처리
     onDeleteAlarm(id) {
         this.alarmModel.delete(id)   
-        this.alarmView.renderList(this.alarmModel.list())
+        this.alarmView.renderList(this.alarmModel.getList())
     }
 
     /* 스톱워치 */
@@ -147,7 +147,7 @@ class Controller {
 
         // 00:00:00 렌더
         this.watchView.renderReset()
-        this.watchView.renderList(this.watchModel.list())
+        this.watchView.renderList(this.watchModel.getList())
 
         // 초기화 플래그
         this.isInit = true
@@ -179,7 +179,7 @@ class Controller {
         // 스탑워치 멈출 때 (카운트 멈춤)
         this.watchModel.stopWatch()
         this.watchModel.add(time)
-        this.watchView.renderList(this.watchModel.list())
+        this.watchView.renderList(this.watchModel.getList())
         this.messageView.$element?.remove()
         this.messageView.render(document.querySelector('#watchSection'), 'success', MESSAGE.SUCCESS)
         this.isStop = true
@@ -188,7 +188,7 @@ class Controller {
     //삭제 버튼 처리
     onDeleteRecord(id) {
         this.watchModel.delete(id)   
-        this.watchView.renderList(this.watchModel.list())
+        this.watchView.renderList(this.watchModel.getList())
     }
 }
 

@@ -35,7 +35,7 @@
 - `TabView.js` : 탭 컴포넌트 렌더
 - `View.js` : 뷰 컴포넌트에만 상속시킬 공통 메서드 정의
     - `on()` : 이벤트 바인딩
-    - `destroy()`: 이벤트 언바인딩
+    - `off()`: 이벤트 언바인딩
     - `emit()` : 커스텀 이벤트 생성, 디스패치, detail 프로퍼티로 데이터 전달
     - `show(), hide()` : 뷰 단위로 노출/비노출
     - `createElement()` : 요소생성 helper
@@ -47,7 +47,7 @@
 #### utils
     - `EventEmmiter.js`: 옵저버(감시자) 패턴 구현
         - `on()`: 감지에 연결될 handler 등록
-        - `destroy()`: 감지에 등록된 handler 제거
+        - `off()`: 감지에 등록된 handler 제거
         - `emit()`: 감지 발생시 broadcast
     - `FetchData.js`: path의 data를 fetch함
     - `Storage.js`: window.localstorage를 get, set

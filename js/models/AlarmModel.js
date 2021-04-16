@@ -1,38 +1,46 @@
 import ClockModel from './ClockModel.js'
 
-import { MESSAGE, STATE } from '../Constants.js'
+import { MESSAGE, STATE, REGEX_CHECK_FORMAT } from '../Constants.js'
 import { Storage } from '../utils/Storage.js'
-import { FetchData } from '../utils/FetchData.js'
+import { fetchData } from '../utils/fetchData.js'
 
 class AlarmModel extends ClockModel {
     constructor() {
         super()
-        this.alarms = Storage.get('alarms')
+        this.alarms = Storage.get('ALARMS') || []
     }
 
     // 샘플 데이터 Fetch
-    getFetchData = async (PATH) => {
-        this.alarms = await FetchData(PATH)
-        //fetch 못하면 데이터 없는 상태로 시작
-        this.setState(this.alarms ? this.alarms : [])
+    getFetchData = async (path) => {
+        this.alarms = await fetchData(path)
+        
+        // 샘플 데이터에 오늘 날짜 설정
+        this.alarms.map( item => {
+            item.date = this.getClock().date
+        })
+
+        // fetch 못하면 데이터 없는 상태로 시작
+        this.setState(this.alarms || [])
     }
 
     // 리스트 가져오기
-    list() {
+    getList() {
         return this.alarms
     }
 
     // 추가
     add(time) {
         const [hour, min, sec] = time.split(':')
+        // util로 빼보자
         const alarm = {
             seconds: this.getSeconds(hour, min, sec),
+            date: this.getClock().date,
             time: {
-                date: this.getClock().date,
                 hour: hour,
                 min: min,
                 sec: sec,
             },
+            //time,  이렇게 덩어리로 넣을수있게 
             state: STATE.PENDING,
         }
 
@@ -47,33 +55,30 @@ class AlarmModel extends ClockModel {
     setState() {
         const currentTime = this.getClock()
         const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
+        //map되나보기
 
         this.alarms.forEach( item => {
             // 알람 state Change
             if (item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = STATE.ACTIVE
             else if (item.seconds - currentSeconds < 0 ) item.state = STATE.EXPIRED
-
             // 자정 Change
-            if (item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
+            if (item.date < currentTime.date) this.alarms = this.alarms.filter( item => item.date === currentTime.date)
         })
         this._commit(this.alarms)
     }
 
     isError(inputTime) {
         const [hour, min, sec] = inputTime.split(':')
-        
         const currentTime = this.getClock()
-        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
         const inputSeconds = this.getSeconds(hour, min, sec)
+        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
 
         // 시간형식에 맞는지 확인
-        if (inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
-            return MESSAGE.EMPTY
-        }
+        if (!REGEX_CHECK_FORMAT.test(inputTime)) return MESSAGE.EMPTY
         // 과거 시간인지 확인
         if (inputSeconds - currentSeconds <= 0) return MESSAGE.PAST
         // 존재하는 알람인지 확인
-        if (this.alarms.some( item => item.seconds === inputSeconds )) return MESSAGE.EXIST
+        if (this.alarms.some(item => item.seconds === inputSeconds)) return MESSAGE.EXIST
 
         return false
     }
@@ -85,7 +90,7 @@ class AlarmModel extends ClockModel {
     }
 
     _commit(alarms) {
-        Storage.set('alarms', alarms)
+        Storage.set('ALARMS', alarms)
     }
 
     setTimer() {
