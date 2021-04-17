@@ -6,19 +6,19 @@ export default class EventEmitter {
 
     // this.events 배열에 handler 등록
     on(eventName, handler) {
-        this.events[eventName] = this.events[eventName] || [];
-        this.events[eventName].push(handler);
+        this.events[eventName] = this.events[eventName] || []
+        this.events[eventName].push(handler)
     }
 
     // this.events 배열에서 해당 handler 삭제
     off(eventName, handler) {
-        if (this.events[eventName]) this.events.filter(item => item.handler !== handler)
+        if (this.events[eventName])
+            this.events.filter((item) => item.handler !== handler)
     }
 
     // broadCast
     emit(eventName, data) {
-        if (this.events[eventName]) this.events[eventName].forEach( handler => handler(data))
-        //map으로 바꾸자
-
+        if (this.events[eventName])
+            this.events[eventName].map((handler) => handler(data))
     }
 }

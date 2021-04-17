@@ -5,7 +5,7 @@ import { TAB_NAMES } from '../Constants.js'
 class TabView extends View {
     constructor($target) {
         super()
-        const DEFAULT_TAB = TAB_NAMES.CLOCK;
+        const DEFAULT_TAB = TAB_NAMES.CLOCK
         this.$element = $target
         this.$tabList = this.createElement('ul', 'tab_list', 'tabs')
         this.$element.append(this.$tabList)
@@ -19,7 +19,7 @@ class TabView extends View {
     setActiveTab(tabName) {
         this.$tab = this.$element.querySelectorAll('#tabs li')
 
-        for(const li of this.$tab) {
+        for (const li of this.$tab) {
             li.className = li.innerHTML === tabName ? 'active' : ''
         }
 
@@ -30,7 +30,7 @@ class TabView extends View {
         this.$tabList.addEventListener('click', this.onClickTab)
     }
 
-    onClickTab = e => {
+    onClickTab = (e) => {
         //탭변화 있으면
         if (this.tabName !== e.target.innerHTML && e.target.tagName === 'LI') {
             this.setActiveTab(e.target.innerHTML)
@@ -39,7 +39,7 @@ class TabView extends View {
     }
 
     render(tabList) {
-        tabList.forEach(item => {
+        tabList.map((item) => {
             const $li = this.createElement('li')
             $li.innerHTML = item
             this.$tabList.append($li)

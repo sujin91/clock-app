@@ -1,8 +1,5 @@
-import EventEmitter from "../utils/EventEmitter.js"
-
 // View에서는 EventEmitter대신 CustomEvent로 Observer
 export default class View {
-    // 나눌까말까
     // 이벤트 등록
     on(eventName, handler) {
         this.$element.addEventListener(eventName, handler)
@@ -27,7 +24,8 @@ export default class View {
     }
 
     show() {
-        this.$element.style.getPropertyValue(`display`) === `none` && this.$element.style.setProperty(`display`, `block`)
+        this.$element.style.getPropertyValue(`display`) === `none` &&
+            this.$element.style.setProperty(`display`, `block`)
         return this
     }
 
@@ -35,8 +33,15 @@ export default class View {
     createElement(tagName, className, id) {
         const $element = document.createElement(tagName)
         className && $element.classList.add(className)
-        if(id) $element.id = id
+        if (id) $element.id = id
 
         return $element
+    }
+
+    // 자식 요소 비움
+    clearChildElement($target) {
+        while ($target.firstChild) {
+            $target.removeChild($target.firstChild)
+        }
     }
 }

@@ -4,25 +4,23 @@ class ClockModel extends EventEmitter {
     constructor() {
         super()
         this.clock = {}
-        this.setClock()
     }
 
     setClock() {
         const dataObj = new Date()
         this.clock = {
             date: dataObj.getDate(),
-            hour: dataObj.getHours(),
-            min: dataObj.getMinutes(),
-            sec: dataObj.getSeconds(),
+            time: {
+                hour: dataObj.getHours(),
+                min: dataObj.getMinutes(),
+                sec: dataObj.getSeconds(),
+            },
         }
     }
 
-    getClock() {
+    getClockObj() {
+        this.setClock()
         return this.clock
-    }
-
-    getSeconds(hour, min, sec) {
-        return Number(hour) * 60 * 60 + Number(min) * 60 + Number(sec)
     }
 
     setTimer() {

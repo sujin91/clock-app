@@ -1,10 +1,11 @@
 import EventEmitter from '../utils/EventEmitter.js'
-import { Storage } from '../utils/Storage.js'
+import { getTimeObj } from '../utils/time.js'
+import { storage } from '../utils/storage.js'
 
 class WatchModel extends EventEmitter {
     constructor() {
         super()
-        this.records = []
+        this.records = new Map()
     }
 
     // 리스트 가져오기
@@ -15,49 +16,43 @@ class WatchModel extends EventEmitter {
     // 추가
     add(time) {
         const [hour, min, sec, msec] = time.replace('.', ':').split(':')
+
         const record = {
-            id: this.records.length > 0 ? this.records[this.records.length - 1].id + 1 : 1,
-            time: {
-                hour: hour,
-                min: min,
-                sec: sec,
-                msec : msec
-            },
+            time: getTimeObj(hour, min, sec, msec),
         }
 
-        this.records.push(record)
+        this.records.set(Date.now(), record)
         this._commit(this.records)
     }
 
-
     // 리스트 전체 비우기
     clear() {
-        this.records = []
+        this.records.clear()
         this._commit(this.records)
     }
 
     // 리스트 요소 삭제
     delete(id) {
-        this.records = this.records.filter(item => item.id !== id)
+        this.records.delete(id)
         this._commit(this.records)
     }
 
-    _commit(records) {
-        Storage.set('RECORDS', records)
+    _commit() {
+        storage.set('RECORDS', this.records)
     }
 
     // 스톱워치 시작
     startWatch() {
         // 재시작으로 카운트 될 때
         if (this.endTime > 0) this.startTime += Date.now() - this.endTime
-        // 처음 눌려서 카운트 될 때 
-        else this.startTime = Date.now() 
+        // 처음 눌려서 카운트 될 때
+        else this.startTime = Date.now()
 
         this.setTimer()
     }
 
     setTimer() {
-        this.watchTimer = setInterval( () => {
+        this.watchTimer = setInterval(() => {
             this.watchTime = Date.now() - this.startTime
             this.emit('@TIMER', this.watchTime)
         }, 1)

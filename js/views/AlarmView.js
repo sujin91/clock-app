@@ -1,12 +1,11 @@
 import View from './View.js'
 import MessageView from '../views/MessageView.js'
-
-import { WHITELIST, MESSAGE, BTN_DELETE, COLOR, STATE, REGEX_CHECK_NUMBER } from '../Constants.js'
+import { WHITELIST, MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
 
 // 알람 탭
 class AlarmView extends View {
     constructor($target) {
-        super()        
+        super()
         this.$element = $target
         this.$form = this.$element.querySelector('#formSection')
         this.$input = this.$form.querySelector('#inputAlarm')
@@ -34,48 +33,58 @@ class AlarmView extends View {
         this.$alarmList.addEventListener('click', this.onDeleteAlarm)
     }
 
-    onInput = e => {
+    onInput = (e) => {
         // 숫자 + 콜론 정규식
-        this.$input.value = this.$input.value.replace(REGEX_CHECK_NUMBER, '')
+        this.$input.value = this.$input.value.replace(/[^0-9:]/gi, '')
 
         // 콜론 생성
-        if ( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
+        if (
+            !this.backSpaceMode &&
+            (this.$input.value.length === 2 || this.$input.value.length === 5)
+        ) {
             this.$input.value = `${this.$input.value}:`
         }
 
-        //isValidate, 
-        const [hour, min, sec] = this.$input.value.split(':')
-        this.message.$element?.remove()
-
-        if (Number(hour) >= 24) {    
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.HOUR_FORMAT)
-            this.$input.value = ''
-        }
-        if (Number(min) >= 60) {
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.MIN_FORMAT)
-            this.$input.value = `${hour}:`
-        }
-        if (Number(sec) >= 60) {
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.SEC_FORMAT)
-            this.$input.value = `${hour}:${min}:`
-        } 
+        this.isErrorFormat()
     }
-    
-    onKeyDown = e => {
+
+    onKeyDown = (e) => {
         // 숫자&&주요키만 사용 가능
         if (Number(e.key) >= 0 && Number(e.key) < 10) {
             this.backSpaceMode = false
             return
         }
-        if (WHITELIST.some(code => e.code === code)) {
+        if (WHITELIST.some((code) => e.code === code)) {
             this.backSpaceMode = false
             return
         }
-        if ( e.key === 'Backspace' ) {
+        if (e.key === 'Backspace') {
             this.backSpaceMode = true
             return
         }
+
         e.preventDefault()
+    }
+
+    isErrorFormat() {
+        const [hour, min, sec] = this.$input.value.split(':')
+        let warningMessage = ''
+        this.message.$element?.remove()
+
+        if (Number(hour) >= 24) {
+            warningMessage = MESSAGE.HOUR_FORMAT
+            this.$input.value = ''
+        }
+        if (Number(min) >= 60) {
+            warningMessage = MESSAGE.MIN_FORMAT
+            this.$input.value = `${hour}:`
+        }
+        if (Number(sec) >= 60) {
+            warningMessage = MESSAGE.SEC_FORMAT
+            this.$input.value = `${hour}:${min}:`
+        }
+
+        this.message.render(this.$input.parentNode, 'warning', warningMessage)
     }
 
     onClickGetTime = () => {
@@ -86,64 +95,67 @@ class AlarmView extends View {
     onClickGetSample = () => {
         this.emit('@SAMPLE')
         //리스트가 생성되면 다시 이벤트 바인딩
-        this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
+        this.$alarmList.addEventListener('click', this.onDeleteAlarm)
     }
 
-    onSubmitAlarm = e => {
+    onSubmitAlarm = (e) => {
         e.preventDefault()
         //리스트가 생성되면 다시 이벤트 바인딩
-        if(this.$alarmList.childNodes.length === 0) this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
+        if (this.$alarmList.childNodes.length === 0)
+            this.$alarmList.addEventListener('click', this.onDeleteAlarm)
+
         this.$input.focus()
-        this.emit('@ADD', {input: this.$input.value})
+        this.emit('@ADD', { input: this.$input.value })
         this.$input.value = ''
     }
 
-    onDeleteAlarm = e => {
-        //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        if(this.$alarmList.childNodes.length === 0) this.off('click', this.$alarmList, this.onDeleteAlarm)
-        if(e.target.id === 'buttonDelete') this.emit('@DELETE', {id: e.toElement.parentNode.id})
+    onDeleteAlarm = (e) => {
+        //리스트요소 개수가 0이되면 삭제버튼 클릭이벤트 언바인딩
+        if (this.$alarmList.childNodes.length === 0)
+            this.off('click', this.$alarmList, this.onDeleteAlarm)
+
+        if (e.target.id === 'buttonDelete')
+            this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
     }
 
     // 폼요소에 현재시각 렌더
     renderTime(currentTime) {
-        const { hour, min, sec } = currentTime
-        // 문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
-        const hourValue = String(hour).padStart(2, "0") 
-        const minValue = String(min).padStart(2, "0")
-        const secValue = String(sec).padStart(2, "0")
+        const { time } = currentTime
 
-        this.$input.value = `${hourValue}:${minValue}:${secValue}`
+        for (const unit in time) {
+            time[unit] = String(time[unit]).padStart(2, '0')
+        }
+
+        this.$input.value = `${time.hour}:${time.min}:${time.sec}`
     }
 
     // 알람목록 렌더
-    renderList (list) {
-        //유틸로 빼보자 지우는거 
-        while (this.$alarmList.firstChild) {
-            this.$alarmList.removeChild(this.$alarmList.firstChild)
-        }
+    renderList(list) {
+        this.clearChildElement(this.$alarmList)
 
-
-        //map
-        list.forEach(item => {
+        for (let [key, value] of list.entries()) {
             const $li = this.createElement('li')
-            $li.id = item.seconds
+            $li.id = key
 
             const $span = this.createElement('span')
-            $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}`
+            $span.innerHTML = `${value.time.hour}:${value.time.min}:${value.time.sec}`
 
-            item.state === STATE.PENDING && $span.style.setProperty('color', COLOR.BLACK)
-            item.state === STATE.EXPIRED && $span.style.setProperty('color', COLOR.GRAY)
-            item.state === STATE.ACTIVE && $span.style.setProperty('color', COLOR.RED)
-            
+            value.state === STATE.PENDING &&
+                $span.style.setProperty('color', COLOR.BLACK)
+            value.state === STATE.EXPIRED &&
+                $span.style.setProperty('color', COLOR.GRAY)
+            value.state === STATE.ACTIVE &&
+                $span.style.setProperty('color', COLOR.RED)
+
             const $button = this.createElement('button', 'button_delete')
             $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
-            
-            $li.append($span, $button)
-            this.$alarmList.append($li)    
-        })
 
-        this.$alarmCount.innerHTML = `총: ${list.length}` 
+            $li.append($span, $button)
+            this.$alarmList.append($li)
+        }
+
+        this.$alarmCount.innerHTML = `총: ${list.size}`
     }
 }
 

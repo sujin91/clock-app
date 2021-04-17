@@ -38,7 +38,8 @@
     - `off()`: 이벤트 언바인딩
     - `emit()` : 커스텀 이벤트 생성, 디스패치, detail 프로퍼티로 데이터 전달
     - `show(), hide()` : 뷰 단위로 노출/비노출
-    - `createElement()` : 요소생성 helper
+    - `createElement()` : 요소생성
+    - `clearChildElement()` : 자식요소 전체삭제
 - 전체 뷰는 커스텀이벤트를 생성/디스패치를 상속받아 이벤트를 감지하여 `Controller`에게 알림 
 
 #### Controllers
@@ -49,8 +50,16 @@
         - `on()`: 감지에 연결될 handler 등록
         - `off()`: 감지에 등록된 handler 제거
         - `emit()`: 감지 발생시 broadcast
-    - `FetchData.js`: path의 data를 fetch함
-    - `Storage.js`: window.localstorage를 get, set
+    - `fetchData.js`: path의 data를 fetch함
+    - `refineData.js`: fetch된 데이터를 정제함
+        - `id`: 시분초를 초단위로 계산하여 값 정제
+        - `date`: 자정이 되면 사라지기 때문에 오늘날짜로 정제
+        - `time`: 시분초값을 padstart(2, '0')하여 문자열로 정제
+    - `storage.js`: window.localstorage를 get, set
+    - `time.js`: 시간 계산 관련 메서드
+        - `calcSeconds()`: 초단위로 반환
+        - `getTimeObj()`: 시분초(밀리초)를 담은 Object로 반환
+
 
 #### Contsant.js    
     - `magic string` 관리
@@ -73,6 +82,10 @@
                 - 복붙 가능
                 - 과거시간 알람 등록 불가
                 - 중복시간 알람 등록 불가
+        - 샘플 데이터 불러오기
+            - async, await을 이용한 비동기 호출
+            - 샘플 데이터 정제
+            
     - 알람 리스트
         - 시간 감지 후 상태 변화
             - 과거알람(GRAY), 알람10초전(RED), 미래알람(BLACK)

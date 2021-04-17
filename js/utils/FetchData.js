@@ -4,11 +4,8 @@ export const fetchData = async (path) => {
         const data = await res.json()
 
         return data
-    }
-
-    catch (err) {
+    } catch (err) {
         console.log(err)
         return null
     }
 }
-

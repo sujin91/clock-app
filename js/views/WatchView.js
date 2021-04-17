@@ -1,5 +1,4 @@
 import View from './View.js'
-
 import { INIT_TIMESTAMP, BTN_DELETE } from '../Constants.js'
 
 class WatchView extends View {
@@ -30,63 +29,57 @@ class WatchView extends View {
     }
 
     onReset = () => this.emit('@RESET') // broadcast the event '@RESET'
-    
+
     onAddRecord = () => {
         //리스트가 생성되면 다시 이벤트 바인딩
-        if(this.$recordList.childNodes.length === 0) this.$recordList.addEventListener('click', this.onDeleteRecord)  
+        if (this.$recordList.childNodes.length === 0)
+            this.$recordList.addEventListener('click', this.onDeleteRecord)
         this.emit('@ADD', { time: this.$watch.innerHTML })
     }
 
-    onDeleteRecord = e => {
+    onDeleteRecord = (e) => {
         //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        if(this.$recordList.childNodes.length === 0) this.off('click', this.$recordList, this.onDeleteRecord)
+        if (this.$recordList.childNodes.length === 0)
+            this.off('click', this.$recordList, this.onDeleteRecord)
         this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
     }
 
     // 스톱워치 시계 렌더
     renderStopWatch(watchTime) {
         // 뺄수있나봅시다ㅏ
-        this.hour = String(Math.floor(watchTime / 1000 / 60 / 60) % 60).padStart(2, "0")
-        this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(2, "0")
-        this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
-        this.msec = String(Math.floor(watchTime) % 1000).padStart(3, "0")
-        
+        this.hour = String(
+            Math.floor(watchTime / 1000 / 60 / 60) % 60
+        ).padStart(2, '0')
+        this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(
+            2,
+            '0'
+        )
+        this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, '0')
+        this.msec = String(Math.floor(watchTime) % 1000).padStart(3, '0')
+
         this.$watch.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
-    }
-
-    // 탭이동으로 인한 스톱워치 마지막 기록값 렌더
-    renderLastWatch(records) {
-        // 기록이 있으면
-        if (records.length > 0) {
-            let lastRecord = records[records.length - 1]
-            this.$watch.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
-
-            return
-        } 
     }
 
     // 스톱워치 기록 목록 렌더
     renderList(list) {
-        while (this.$recordList.firstChild) {
-            this.$recordList.removeChild(this.$recordList.firstChild)
-        }
+        this.clearChildElement(this.$recordList)
 
-        list.forEach(item => {
+        for (let [key, value] of list.entries()) {
             const $li = this.createElement('li')
-            $li.id = item.id
+            $li.id = key
 
             const $span = this.createElement('span')
-            $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}.${item.time.msec}`
+            $span.innerHTML = `${value.time.hour}:${value.time.min}:${value.time.sec}.${value.time.msec}`
 
             const $button = this.createElement('button', 'button_delete')
             $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
-            
-            $li.append($span, $button)
-            this.$recordList.append($li)    
-        })
 
-        this.$recordCount.innerHTML = `총: ${list.length}` 
+            $li.append($span, $button)
+            this.$recordList.append($li)
+        }
+
+        this.$recordCount.innerHTML = `총: ${list.size}`
     }
 }
 

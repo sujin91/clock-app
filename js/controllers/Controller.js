@@ -23,30 +23,21 @@ class Controller {
         this.watchView = new WatchView(document.querySelector('#watchArea'))
         this.messageView = new MessageView()
 
-        this.clockModel
-            .on('@TIMER', this.handleClock)
-
-        this.alarmModel
-            .on('@TIMER', this.handleAlarm)
-
-        this.watchModel
-            .on('@TIMER', this.handleWatch)
-
-        this.tabView
-            .on('@CHANGE', e => this.onChangeTab(e.detail.tabName))
-
+        this.clockModel.on('@TIMER', this.handleClock)
+        this.alarmModel.on('@TIMER', this.handleAlarm)
+        this.watchModel.on('@TIMER', this.handleWatch)
+        this.tabView.on('@CHANGE', (e) => this.onChangeTab(e.detail.tabName))
         this.alarmView
-            .on('@NOW', e => this.onGetTime())
-            .on('@ADD', e => this.onAddAlarm(e.detail.input))
-            .on('@DELETE', e => this.onDeleteAlarm(e.detail.id))
-            .on('@SAMPLE', e => this.onGetSample())
-            
+            .on('@NOW', () => this.onGetTime())
+            .on('@ADD', (e) => this.onAddAlarm(e.detail.input))
+            .on('@DELETE', (e) => this.onDeleteAlarm(e.detail.id))
+            .on('@SAMPLE', () => this.onGetSample())
         this.watchView
-            .on('@RESET', e => this.onResetTimerWatch())
-            .on('@ADD', e => this.onAddRecord(e.detail.time))
-            .on('@DELETE', e => this.onDeleteRecord(e.detail.id))
+            .on('@RESET', () => this.onResetTimerWatch())
+            .on('@ADD', (e) => this.onAddRecord(e.detail.time))
+            .on('@DELETE', (e) => this.onDeleteRecord(e.detail.id))
 
-        // 초기 화면 
+        // 초기 화면
         this.clockView.hide()
         this.alarmView.hide()
         this.watchView.hide()
@@ -62,21 +53,21 @@ class Controller {
 
     onChangeTab(tabName) {
         this.selectedTab = tabName
-        
+
         // 시계 탭
         if (this.selectedTab === TAB_NAMES.CLOCK) {
-            this.clockView.render(this.clockModel.getClock())
+            this.clockView.render(this.clockModel.getClockObj())
             this.alarmFlag = this.alarmModel.clearTimer()
-            
+
             this.clockView.show()
             this.alarmView.hide()
             this.watchView.hide()
 
             if (!this.clockFlag) this.clockFlag = this.clockModel.setTimer()
-        } 
+        }
         // 알람 탭
         else if (this.selectedTab === TAB_NAMES.ALARM) {
-            this.clockView.render(this.clockModel.getClock())
+            this.clockView.render(this.clockModel.getClockObj())
             this.alarmView.renderList(this.alarmModel.getList())
 
             this.alarmView.show()
@@ -85,18 +76,17 @@ class Controller {
 
             if (!this.clockFlag) this.clockFlag = this.clockModel.setTimer()
             if (!this.alarmFlag) this.alarmFlag = this.alarmModel.setTimer()
-        } 
+        }
         // 스탑워치 탭
-        else  { 
+        else {
+            this.alarmFlag = this.alarmModel.clearTimer()
+
             this.alarmView.hide()
             this.watchView.show()
 
-            this.alarmFlag = this.alarmModel.clearTimer()
-
-            // 스톱워치 기록 존재 || 초기화 눌렀으면 clockView hide
-            if (this.watchModel.records.length > 0 || this.isInit === true) {
+            // 초기화 눌렀으면
+            if (this.isInit) {
                 this.clockView.hide()
-                this.watchView.renderLastWatch(this.watchModel.getList())
                 this.clockFlag = this.clockModel.clearTimer()
             }
         }
@@ -105,11 +95,11 @@ class Controller {
     /* 알람 */
     // 현재시간 버튼 처리
     onGetTime() {
-        this.alarmView.renderTime(this.clockModel.getClock())
+        this.alarmView.renderTime(this.clockModel.getClockObj())
     }
 
     onGetSample() {
-        this.alarmModel.getFetchData(SAMPLE_JSON)
+        this.alarmModel.fetchSample(SAMPLE_JSON)
     }
 
     // 등록 버튼 처리
@@ -117,21 +107,29 @@ class Controller {
         //Message 존재하면 삭제
         this.messageView.$element?.remove()
         const isErrorText = this.alarmModel.isError(time)
-        
+
         if (isErrorText) {
-            this.messageView.render(document.querySelector('#formSection'), 'warning', isErrorText)
+            this.messageView.render(
+                document.querySelector('#formSection'),
+                'warning',
+                isErrorText
+            )
 
             return
         }
 
         this.alarmModel.add(time)
         this.alarmView.renderList(this.alarmModel.getList())
-        this.messageView.render(document.querySelector('#formSection'), 'success', MESSAGE.SUCCESS)
+        this.messageView.render(
+            document.querySelector('#formSection'),
+            'success',
+            MESSAGE.SUCCESS
+        )
     }
 
     // 삭제 버튼 처리
     onDeleteAlarm(id) {
-        this.alarmModel.delete(id)   
+        this.alarmModel.delete(id)
         this.alarmView.renderList(this.alarmModel.getList())
     }
 
@@ -165,11 +163,15 @@ class Controller {
     onAddRecord(time) {
         // 초기화 안됐을 때
         if (!this.isInit) {
-            this.messageView.render(document.querySelector('#watchSection'), 'warning', MESSAGE.INIT)
+            this.messageView.render(
+                document.querySelector('#watchSection'),
+                'warning',
+                MESSAGE.INIT
+            )
 
             return
         }
-        // 기록 시작할 때 (카운트 돔) 
+        // 기록 시작할 때 (카운트 돔)
         if (this.isStop) {
             this.watchModel.startWatch()
             this.isStop = false
@@ -181,13 +183,17 @@ class Controller {
         this.watchModel.add(time)
         this.watchView.renderList(this.watchModel.getList())
         this.messageView.$element?.remove()
-        this.messageView.render(document.querySelector('#watchSection'), 'success', MESSAGE.SUCCESS)
+        this.messageView.render(
+            document.querySelector('#watchSection'),
+            'success',
+            MESSAGE.SUCCESS
+        )
         this.isStop = true
     }
 
     //삭제 버튼 처리
     onDeleteRecord(id) {
-        this.watchModel.delete(id)   
+        this.watchModel.delete(id)
         this.watchView.renderList(this.watchModel.getList())
     }
 }
