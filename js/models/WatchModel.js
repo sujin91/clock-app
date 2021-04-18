@@ -21,6 +21,7 @@ class WatchModel extends EventEmitter {
             time: getTimeObj(hour, min, sec, msec),
         }
 
+        //key: id
         this.records.set(Date.now(), record)
         this._commit(this.records)
     }
@@ -53,8 +54,9 @@ class WatchModel extends EventEmitter {
 
     setTimer() {
         this.watchTimer = setInterval(() => {
-            this.watchTime = Date.now() - this.startTime
-            this.emit('@TIMER', this.watchTime)
+            // 0.001초마다 경과시간 변경하고 event broadcast
+            this.elapsedTime = Date.now() - this.startTime 
+            this.emit('@TIMER', this.elapsedTime)
         }, 1)
     }
 

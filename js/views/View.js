@@ -1,6 +1,9 @@
-// View에서는 EventEmitter대신 CustomEvent로 Observer
+/**
+ * View 컴포넌트가 공통으로 사용하는 메서드 정의,
+ * CustomEvent/dispatch가 Observer 패턴으로 사용됨
+ */
 export default class View {
-    // 이벤트 등록
+    // 이벤트와 handler 등록
     on(eventName, handler) {
         this.$element.addEventListener(eventName, handler)
         return this
@@ -12,6 +15,7 @@ export default class View {
         return this
     }
 
+    // broadCast
     emit(eventName, data) {
         const evt = new CustomEvent(eventName, { detail: data })
         this.$element.dispatchEvent(evt)

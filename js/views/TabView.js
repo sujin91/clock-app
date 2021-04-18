@@ -9,11 +9,11 @@ class TabView extends View {
         this.$element = $target
         this.$tabList = this.createElement('ul', 'tab_list', 'tabs')
         this.$element.append(this.$tabList)
-        this.tabList = [TAB_NAMES.CLOCK, TAB_NAMES.ALARM, TAB_NAMES.STOPWATCH]
+        this.tabList = Object.values(TAB_NAMES)
 
         this.render(this.tabList)
         this.bindEvent()
-        this.setActiveTab(DEFAULT_TAB)
+        this.setActiveTab(DEFAULT_TAB) // 디폴트 탭: 시계
     }
 
     setActiveTab(tabName) {
@@ -31,10 +31,10 @@ class TabView extends View {
     }
 
     onClickTab = (e) => {
-        //탭변화 있으면
+        // 탭변화 있으면 && li요소이면
         if (this.tabName !== e.target.innerHTML && e.target.tagName === 'LI') {
             this.setActiveTab(e.target.innerHTML)
-            this.emit('@CHANGE', { tabName: this.tabName })
+            this.emit('@CHANGE', { tabName: this.tabName }) // 탭 클릭 broadcast
         }
     }
 

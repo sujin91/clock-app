@@ -1,6 +1,7 @@
 import View from './View.js'
 import MessageView from '../views/MessageView.js'
 import { WHITELIST, MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
+import { getTimeStrObj } from '../utils/time.js'
 
 // 알람 탭
 class AlarmView extends View {
@@ -35,9 +36,10 @@ class AlarmView extends View {
 
     onInput = (e) => {
         // 숫자 + 콜론 정규식
-        this.$input.value = this.$input.value.replace(/[^0-9:]/gi, '')
+        const regex = /[^0-9:]/gi
+        this.$input.value = this.$input.value.replace(regex, '')
 
-        // 콜론 생성
+        // 자동 콜론 생성 (backspaceMode가 아닐때)
         if (
             !this.backSpaceMode &&
             (this.$input.value.length === 2 || this.$input.value.length === 5)
@@ -59,6 +61,7 @@ class AlarmView extends View {
             return
         }
         if (e.key === 'Backspace') {
+            // Backspace 처리 flag
             this.backSpaceMode = true
             return
         }
@@ -66,11 +69,13 @@ class AlarmView extends View {
         e.preventDefault()
     }
 
+    // 시간 Format 유효성 검사
     isErrorFormat() {
         const [hour, min, sec] = this.$input.value.split(':')
         let warningMessage = ''
         this.message.$element?.remove()
 
+        // 24시 60분 60초 이상 입력시 입력값 자동 삭제 처리
         if (Number(hour) >= 24) {
             warningMessage = MESSAGE.HOUR_FORMAT
             this.$input.value = ''
@@ -89,24 +94,24 @@ class AlarmView extends View {
 
     onClickGetTime = () => {
         this.$input.focus()
-        this.emit('@NOW')
+        this.emit('@NOW') // 현재시간 버튼 클릭 broadcast
     }
 
     onClickGetSample = () => {
-        this.emit('@SAMPLE')
-        //리스트가 생성되면 다시 이벤트 바인딩
+        this.emit('@SAMPLE') // 샘플 버튼 클릭 broadcast
+        // 리스트가 생성되면 다시 이벤트 바인딩
         this.$alarmList.addEventListener('click', this.onDeleteAlarm)
     }
 
     onSubmitAlarm = (e) => {
         e.preventDefault()
-        //리스트가 생성되면 다시 이벤트 바인딩
+        // 리스트가 생성되면 다시 이벤트 바인딩
         if (this.$alarmList.childNodes.length === 0)
             this.$alarmList.addEventListener('click', this.onDeleteAlarm)
 
+        this.emit('@ADD', { input: this.$input.value }) // Submit(엔터, 등록) broadcast
+        this.$input.value = '' // 등록 후 인풋 초기화
         this.$input.focus()
-        this.emit('@ADD', { input: this.$input.value })
-        this.$input.value = ''
     }
 
     onDeleteAlarm = (e) => {
@@ -115,18 +120,15 @@ class AlarmView extends View {
             this.off('click', this.$alarmList, this.onDeleteAlarm)
 
         if (e.target.id === 'buttonDelete')
-            this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+            this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) // 삭제 버튼 클릭 broadcast
     }
 
     // 폼요소에 현재시각 렌더
     renderTime(currentTime) {
         const { time } = currentTime
+        const { hour, min, sec } = getTimeStrObj(time)
 
-        for (const unit in time) {
-            time[unit] = String(time[unit]).padStart(2, '0')
-        }
-
-        this.$input.value = `${time.hour}:${time.min}:${time.sec}`
+        this.$input.value = `${hour}:${min}:${sec}`
     }
 
     // 알람목록 렌더

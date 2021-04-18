@@ -1,4 +1,5 @@
 import View from './View.js'
+import { getTimeStrObj } from '../utils/time.js'
 
 class ClockView extends View {
     constructor($target) {
@@ -10,11 +11,9 @@ class ClockView extends View {
     // 시계 렌더
     render(currentTime) {
         const { time } = currentTime
-        for (const unit in time) {
-            time[unit] = String(time[unit]).padStart(2, '0')
-        }
+        const { hour, min, sec } = getTimeStrObj(time)
 
-        this.$clock.innerHTML = `${time.hour}:${time.min}:${time.sec}`
+        this.$clock.innerHTML = `${hour}:${min}:${sec}`
     }
 }
 

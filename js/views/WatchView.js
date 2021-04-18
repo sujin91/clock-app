@@ -1,5 +1,6 @@
 import View from './View.js'
 import { INIT_TIMESTAMP, BTN_DELETE } from '../Constants.js'
+import { getTimeStrObj } from '../utils/time.js'
 
 class WatchView extends View {
     constructor($target) {
@@ -28,36 +29,40 @@ class WatchView extends View {
         this.$recordList.addEventListener('click', this.onDeleteRecord)
     }
 
-    onReset = () => this.emit('@RESET') // broadcast the event '@RESET'
+    onReset = () => this.emit('@RESET') // 초기화 버튼 클릭 broadcast
 
     onAddRecord = () => {
         //리스트가 생성되면 다시 이벤트 바인딩
         if (this.$recordList.childNodes.length === 0)
             this.$recordList.addEventListener('click', this.onDeleteRecord)
-        this.emit('@ADD', { time: this.$watch.innerHTML })
+        this.emit('@ADD', { time: this.$watch.innerHTML }) // 기록 버튼 클릭 broadcast
     }
 
     onDeleteRecord = (e) => {
         //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
         if (this.$recordList.childNodes.length === 0)
             this.off('click', this.$recordList, this.onDeleteRecord)
-        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) // 삭제 버튼 클릭 broadcast
     }
 
     // 스톱워치 시계 렌더
-    renderStopWatch(watchTime) {
-        // 뺄수있나봅시다ㅏ
-        this.hour = String(
-            Math.floor(watchTime / 1000 / 60 / 60) % 60
-        ).padStart(2, '0')
-        this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(
-            2,
-            '0'
-        )
-        this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, '0')
-        this.msec = String(Math.floor(watchTime) % 1000).padStart(3, '0')
+    renderStopWatch(elapsedTime) {
+        const time = this.convertTime(elapsedTime)
+        const { hour, min, sec, msec } = getTimeStrObj(time)
+        
+        this.$watch.innerHTML = `${hour}:${min}:${sec}.${msec}`
+    }
 
-        this.$watch.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
+    // 경과시간(unix time)을 convert
+    convertTime(elapsedTime) {
+        const time = {
+            hour: Math.floor(elapsedTime / 3600000) % 60,
+            min: Math.floor(elapsedTime / 6000) % 60,
+            sec: Math.floor(elapsedTime / 1000) % 60,
+            msec: Math.floor(elapsedTime) % 1000,
+        }
+
+        return time
     }
 
     // 스톱워치 기록 목록 렌더

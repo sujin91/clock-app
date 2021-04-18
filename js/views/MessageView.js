@@ -5,6 +5,7 @@ class MessageView extends View {
         super()
     }
 
+    // 등록, 주의 메시지 렌더
     render($target, className, text) {
         this.$element = this.createElement('p')
         this.$element.innerHTML = text

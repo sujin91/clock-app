@@ -1,4 +1,6 @@
-// Observer 패턴
+/**
+ * Observer 패턴의 메서드 정의 (Model에서 사용)
+ */
 export default class EventEmitter {
     constructor() {
         this.events = {}

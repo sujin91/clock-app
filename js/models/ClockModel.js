@@ -6,18 +6,20 @@ class ClockModel extends EventEmitter {
         this.clock = {}
     }
 
+    // clock 객체 설정
     setClock() {
-        const dataObj = new Date()
+        const date = new Date()
         this.clock = {
-            date: dataObj.getDate(),
+            date: date.getDate(),
             time: {
-                hour: dataObj.getHours(),
-                min: dataObj.getMinutes(),
-                sec: dataObj.getSeconds(),
+                hour: date.getHours(),
+                min: date.getMinutes(),
+                sec: date.getSeconds(),
             },
         }
     }
 
+    // clock 객체 가져오기
     getClockObj() {
         this.setClock()
         return this.clock
@@ -25,6 +27,7 @@ class ClockModel extends EventEmitter {
 
     setTimer() {
         this.timer = setInterval(() => {
+            // 1초마다 clock 변경하고 event broadcast
             this.setClock()
             this.emit('@TIMER', this.clock)
         }, 1000)

@@ -12,13 +12,14 @@ class AlarmModel extends ClockModel {
         this.alarms = new Map()
     }
 
-    // 샘플 데이터 Fetch
+    // 샘플 데이터 비동기 fetch
     fetchSample = async (path) => {
         this.alarms = await fetchData(path)
-        // fetch 못하면 데이터 없는 상태로 시작
-        this.alarms = this.alarms || []
-        // 샘플 데이터 정제
+
+        // fetch 성공시 데이터 정제
         if (this.alarms) this.alarms = refineData(this.alarms)
+        // fetch 실패시 데이터 없는 상태로 시작
+        else this.alarms = []
 
         this.setState()
     }
@@ -48,35 +49,34 @@ class AlarmModel extends ClockModel {
 
     // '초'에 따른 State 변화
     setState() {
-        const { time, date } = this.getClockObj()
-        const currentSeconds = calcSeconds(time.hour, time.min, time.sec)
+        const {
+            time: { hour, min, sec },
+            date,
+        } = this.getClockObj()
+        const currentSeconds = calcSeconds(hour, min, sec)
 
         for (let [seconds, value] of this.alarms.entries()) {
             const diffTime = seconds - currentSeconds
 
             // 알람 state change
             if (diffTime <= 10 && diffTime > 0) value.state = STATE.ACTIVE
-            else if (diffTime < 0) {
-                value.state = STATE.EXPIRED
-            } else {
-                value.state = STATE.PENDING
-            }
+            else if (diffTime < 0) value.state = STATE.EXPIRED
+            else value.state = STATE.PENDING
 
             // 자정 change
-            if (value.date < date) {
-                this.alarms.clear()
-            }
+            if (value.date < date) this.alarms.clear()
         }
         this._commit(this.alarms)
     }
 
+    // 알람 등록시 에러 체크
     isError(inputTime) {
         const [hour, min, sec] = inputTime.split(':')
-        const inputSeconds = calcSeconds(hour, min, sec)
+        const inputSeconds = calcSeconds(hour, min, sec) // input 받은시간
         const { time } = this.getClockObj()
-        const currentSeconds = calcSeconds(time.hour, time.min, time.sec)
+        const currentSeconds = calcSeconds(time.hour, time.min, time.sec) // 현재시간
 
-        // 시간형식에 맞는지 확인
+        // 시간형식에 맞는지 확인(hh:mm:ss 정규식)
         if (!/^[0-9]{2,2}:[0-9]{2,2}:[0-9]{2,2}$/g.test(inputTime))
             return MESSAGE.EMPTY
         // 과거 시간인지 확인
@@ -93,12 +93,14 @@ class AlarmModel extends ClockModel {
         this._commit(this.alarms)
     }
 
+    // storage 저장
     _commit(alarms) {
         storage.set('ALARMS', alarms)
     }
 
     setTimer() {
         this.timer = setInterval(() => {
+            // 1초마다 state 변경하고 event broadcast
             this.setState()
             this.emit('@TIMER', this.alarms)
         }, 1000)
