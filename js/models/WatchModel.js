@@ -1,8 +1,8 @@
-import EventEmitter from '../utils/EventEmitter.js'
+import Observable from '../utils/Observable.js'
 import { getTimeObj } from '../utils/time.js'
 import { storage } from '../utils/storage.js'
 
-class WatchModel extends EventEmitter {
+class WatchModel extends Observable {
     constructor() {
         super()
         this.records = new Map()

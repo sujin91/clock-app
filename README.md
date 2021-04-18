@@ -25,7 +25,7 @@
 - `ClockModel.js` : Date객체를 사용하여 현재 시간 데이터를 관리하는 모델
 - `AlarmModel.js` : ClockModel을 상속받아 현재 시간을 공유하고 알람 데이터를 관리하는 모델
 - `WatchModel.js` : Date객체의 now()를 활용하여 스탑워치 데이터를 만들고 스탑워치 데이터를 관리하는 모델
-- 전체 모델은 `EventEmitter.js`를 상속받아 데이터가 변경됨을 감지하여 `Controller`에게 알림
+- 전체 모델은 `Observable.js`를 상속받아 데이터가 변경됨을 감지하여 `Controller`에게 알림
     
 #### views
 - `ClockView.js` : 시계 컴포넌트 렌더

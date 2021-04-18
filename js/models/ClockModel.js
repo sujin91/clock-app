@@ -1,6 +1,6 @@
-import EventEmitter from '../utils/EventEmitter.js'
+import Observable from '../utils/Observable.js'
 
-class ClockModel extends EventEmitter {
+class ClockModel extends Observable {
     constructor() {
         super()
         this.clock = {}
