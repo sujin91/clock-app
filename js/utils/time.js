@@ -33,7 +33,7 @@ export const getTimeObj = function (hour, min, sec, msec) {
 export const getTimeStrObj = function (obj) {
     for (const unit in obj) {
         obj[unit] = String(obj[unit]).padStart(2, '0')
-        if (unit === 'msec') String(obj[unit]).padStart(3, '0')
+        if (unit === 'msec') obj[unit] = String(obj[unit]).padStart(3, '0')
     }
 
     return obj

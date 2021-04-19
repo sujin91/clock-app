@@ -6,8 +6,8 @@ export const storage = {
      * @param {String} key : NAMESPACE 상수를 prefix로 가지는 localStorage key
      */
     get: function (key) {
+        //용량, 권한 체크
         try {
-            //용량, 권한 체크
             const data =
                 JSON.parse(localStorage.getItem(`${NAMESPACE}${key}`)) || []
 

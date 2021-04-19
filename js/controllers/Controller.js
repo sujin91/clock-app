@@ -80,7 +80,7 @@ class Controller {
             if (!this.clockFlag) this.clockFlag = this.clockModel.setTimer()
             if (!this.alarmFlag) this.alarmFlag = this.alarmModel.setTimer()
         }
-        // 스탑워치 탭
+        // 스톱워치 탭
         else {
             this.alarmView.hide()
             this.watchView.show()
@@ -140,7 +140,7 @@ class Controller {
         this.alarmView.renderList(this.alarmModel.getList())
     }
 
-    /* 스탑워치 */
+    /* 스톱워치 */
     // 초기화 버튼 처리
     onResetTimerWatch() {
         // 시계,알람 타이머 정지
@@ -157,7 +157,7 @@ class Controller {
         // 초기화 플래그
         this.isInit = true
 
-        // 스탑워치 타이머 플래그
+        // 스톱워치 타이머 플래그
         this.isStop = true
 
         // 기록 중에 초기화 누르면? 타이머정지
@@ -180,14 +180,14 @@ class Controller {
 
             return
         }
-        // 스탑워치 타이머 멈춰 있을 경우
+        // 스톱워치 타이머 멈춰 있을 경우
         if (this.isStop) {
             this.watchModel.startWatch()
             this.isStop = false
 
             return
         }
-        // 스탑워치 타이머 돌고 있을 경우
+        // 스톱워치 타이머 돌고 있을 경우
         this.watchModel.stopWatch()
         this.watchModel.add(time)
         this.watchView.renderList(this.watchModel.getList())

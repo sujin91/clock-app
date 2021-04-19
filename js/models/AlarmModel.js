@@ -14,12 +14,9 @@ class AlarmModel extends ClockModel {
 
     // 샘플 데이터 비동기 fetch
     fetchSample = async (path) => {
-        this.alarms = await fetchData(path)
-
-        // fetch 성공시 데이터 정제
-        if (this.alarms) this.alarms = refineData(this.alarms)
-        // fetch 실패시 데이터 없는 상태로 시작
-        else this.alarms = []
+        const result = await fetchData(path)
+        // fetch 성공시 데이터 정제, 실패시 데이터 없는 상태로 시작
+        this.alarms = result ? refineData(result) : []
 
         this.setState()
     }
@@ -59,7 +56,7 @@ class AlarmModel extends ClockModel {
             const diffTime = seconds - currentSeconds
 
             // 알람 state change
-            if (diffTime <= 10 && diffTime > 0) value.state = STATE.ACTIVE
+            if (diffTime <= 10 && diffTime >= 0) value.state = STATE.ACTIVE
             else if (diffTime < 0) value.state = STATE.EXPIRED
             else value.state = STATE.PENDING
 
