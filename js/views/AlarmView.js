@@ -1,12 +1,12 @@
 import View from './View.js'
 import MessageView from '../views/MessageView.js'
-
-import { MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
+import { WHITELIST, MESSAGE, BTN_DELETE, COLOR, STATE } from '../Constants.js'
+import { getTimeStrObj } from '../utils/time.js'
 
 // 알람 탭
 class AlarmView extends View {
     constructor($target) {
-        super()        
+        super()
         this.$element = $target
         this.$form = this.$element.querySelector('#formSection')
         this.$input = this.$form.querySelector('#inputAlarm')
@@ -34,115 +34,130 @@ class AlarmView extends View {
         this.$alarmList.addEventListener('click', this.onDeleteAlarm)
     }
 
-    onInput = e => {
-        this.regex = /[^0-9:]/gi // 숫자 + 콜론 정규식
-        this.$input.value = this.$input.value.replace(this.regex, '')
+    onInput = (e) => {
+        // 숫자 + 콜론 정규식
+        const regex = /[^0-9:]/gi
+        this.$input.value = this.$input.value.replace(regex, '')
 
-        // 콜론 생성
-        if ( (!this.backSpaceMode && (this.$input.value.length === 2 || this.$input.value.length === 5))) {
+        // 자동 콜론 생성 (backspaceMode가 아닐때)
+        if (
+            !this.backSpaceMode &&
+            (this.$input.value.length === 2 || this.$input.value.length === 5)
+        ) {
             this.$input.value = `${this.$input.value}:`
         }
 
-        this.inputAlarm = this.$input.value.split(':')
-        this.message.$element?.remove()
-
-        if (Number(this.inputAlarm[0]) > 23) {    
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.HOUR_FORMAT)
-            this.inputAlarm.splice(0);
-            this.$input.value = this.inputAlarm.join(':')
-        }
-        if (Number(this.inputAlarm[1]) > 59) {
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.MIN_FORMAT)
-            this.inputAlarm.splice(1);
-            this.$input.value = this.inputAlarm.join(':')+':'
-        }
-        if (Number(this.inputAlarm[2]) > 59) {
-            this.message.render(this.$input.parentNode, 'warning', MESSAGE.SEC_FORMAT)
-            this.inputAlarm.splice(2);
-            this.$input.value = this.inputAlarm.join(':')+':'
-        } 
+        this.isErrorFormat()
     }
-    
-    onKeyDown = e => {
-        // 숫자&&주요키만 사용 가능
-        const whiteList = ['Control', 'Alt', 'Meta', 'ArrowLeft', 'ArrowRight', 'Enter', 'Tab', 'Home', 'End', 'Delete']
 
+    onKeyDown = (e) => {
+        // 숫자&&주요키만 사용 가능
         if (Number(e.key) >= 0 && Number(e.key) < 10) {
             this.backSpaceMode = false
             return
         }
-        if (whiteList.some(code => e.code === code)) {
+        if (WHITELIST.some((code) => e.code === code)) {
             this.backSpaceMode = false
             return
         }
-        if ( e.key === 'Backspace' ) {
+        if (e.key === 'Backspace') {
+            // Backspace 처리 flag
             this.backSpaceMode = true
             return
         }
+
         e.preventDefault()
+    }
+
+    // 시간 Format 유효성 검사
+    isErrorFormat() {
+        const [hour, min, sec] = this.$input.value.split(':')
+        let warningMessage = ''
+        this.message.$element?.remove()
+
+        // 24시 60분 60초 이상 입력시 입력값 자동 삭제 처리
+        if (Number(hour) >= 24) {
+            warningMessage = MESSAGE.HOUR_FORMAT
+            this.$input.value = ''
+        }
+        if (Number(min) >= 60) {
+            warningMessage = MESSAGE.MIN_FORMAT
+            this.$input.value = `${hour}:`
+        }
+        if (Number(sec) >= 60) {
+            warningMessage = MESSAGE.SEC_FORMAT
+            this.$input.value = `${hour}:${min}:`
+        }
+
+        this.message.render(this.$input.parentNode, 'warning', warningMessage)
     }
 
     onClickGetTime = () => {
         this.$input.focus()
-        this.emit('@NOW')
+        this.emit('@NOW') // 현재시간 버튼 클릭 broadcast
     }
 
     onClickGetSample = () => {
-        this.emit('@SAMPLE')
-        //리스트가 생성되면 다시 이벤트 바인딩
-        this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
+        this.emit('@SAMPLE') // 샘플 버튼 클릭 broadcast
+        // 리스트가 생성되면 다시 이벤트 바인딩
+        this.$alarmList.addEventListener('click', this.onDeleteAlarm)
     }
 
-    onSubmitAlarm = e => {
+    onSubmitAlarm = (e) => {
         e.preventDefault()
-        //리스트가 생성되면 다시 이벤트 바인딩
-        this.$alarmList.childElementCount === 0 && this.$alarmList.addEventListener('click', this.onDeleteAlarm) 
+        // 리스트가 생성되면 다시 이벤트 바인딩
+        if (this.$alarmList.childNodes.length === 0)
+            this.$alarmList.addEventListener('click', this.onDeleteAlarm)
+
+        this.emit('@ADD', { input: this.$input.value }) // Submit(엔터, 등록) broadcast
+        this.$input.value = '' // 등록 후 인풋 초기화
         this.$input.focus()
-        this.emit('@ADD', {input: this.$input.value})
     }
 
-    onDeleteAlarm = e => {
-        //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        this.$alarmList.firstChild === null && this.destroy('click', this.$alarmList, this.onDeleteAlarm)
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', {id: e.toElement.parentNode.id})
+    onDeleteAlarm = (e) => {
+        //리스트요소 개수가 0이되면 삭제버튼 클릭이벤트 언바인딩
+        if (this.$alarmList.childNodes.length === 0)
+            this.off('click', this.$alarmList, this.onDeleteAlarm)
+
+        if (e.target.id === 'buttonDelete')
+            this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) // 삭제 버튼 클릭 broadcast
     }
 
     // 폼요소에 현재시각 렌더
     renderTime(currentTime) {
-        // 문자열이 2자리수, 그렇지 않으면 앞에 0 삽입
-        const hour = String(currentTime.hour).padStart(2, "0") 
-        const min = String(currentTime.min).padStart(2, "0")
-        const sec = String(currentTime.sec).padStart(2, "0")
+        const { time } = currentTime
+        const { hour, min, sec } = getTimeStrObj(time)
 
         this.$input.value = `${hour}:${min}:${sec}`
     }
 
     // 알람목록 렌더
-    renderList (list) {
-        while (this.$alarmList.firstChild) {
-            this.$alarmList.removeChild(this.$alarmList.firstChild)
-        }
+    renderList(list) {
+        this.clearChildElement(this.$alarmList)
 
-        list.forEach(item => {
+        for (let [key, value] of list.entries()) {
             const $li = this.createElement('li')
-            $li.id = item.seconds
+            $li.id = key
 
             const $span = this.createElement('span')
-            $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}`
+            $span.innerHTML = `${value.time.hour}:${value.time.min}:${value.time.sec}`
 
-            item.state === STATE.PENDING && $span.style.setProperty('color', COLOR.BLACK)
-            item.state === STATE.EXPIRED && $span.style.setProperty('color', COLOR.GRAY)
-            item.state === STATE.ACTIVE && $span.style.setProperty('color', COLOR.RED)
-            
+            value.state === STATE.PENDING &&
+                $span.style.setProperty('color', COLOR.BLACK)
+            value.state === STATE.EXPIRED &&
+                $span.style.setProperty('color', COLOR.GRAY)
+            value.state === STATE.ACTIVE &&
+                $span.style.setProperty('color', COLOR.RED)
+
             const $button = this.createElement('button', 'button_delete')
             $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
-            
-            $li.append($span, $button)
-            this.$alarmList.append($li)    
-        })
 
-        this.$alarmCount.innerHTML = `총: ${list.length}` 
+            $li.append($span, $button)
+            this.$alarmList.append($li)
+        }
+
+        this.$alarmCount.innerHTML = `총: ${list.size}`
     }
 }
 

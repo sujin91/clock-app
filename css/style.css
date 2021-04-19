@@ -59,7 +59,7 @@ select,
 table,
 button,
 code {
-    font-family: Helvetica, "Apple SD Gothic Neo", sans-serif;
+    font-family: Helvetica, 'Apple SD Gothic Neo', sans-serif;
     font-size: 16px;
     line-height: 1.25;
 }
@@ -206,7 +206,7 @@ legend,
     margin-bottom: -1px;
     padding: 5px 10px;
     border-radius: 3px 3px 0 0;
-    /* background: #eee */;
+    /* background: #eee */
     border: 1px solid #555;
     border-bottom: 0;
     text-align: center;
@@ -253,6 +253,8 @@ legend,
 
 .form_section .input {
     width: 200px;
+    border: 1px solid #000;
+    border-radius: 3px;
 }
 
 .button_area {
@@ -283,7 +285,6 @@ legend,
     font-size: 20px;
     border-bottom: 1px solid #ddd;
 }
-
 
 .button_delete {
     background-color: #ff5353;

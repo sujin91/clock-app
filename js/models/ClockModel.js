@@ -1,32 +1,33 @@
-import EventEmitter from '../utils/EventEmitter.js'
+import Observable from '../utils/Observable.js'
 
-class ClockModel extends EventEmitter {
+class ClockModel extends Observable {
     constructor() {
         super()
         this.clock = {}
     }
 
+    // clock 객체 설정
     setClock() {
-        const dataObj = new Date()
+        const date = new Date()
         this.clock = {
-            date: dataObj.getDate(),
-            hour: dataObj.getHours(),
-            min: Math.floor(Date.now() / 1000 / 60) % 60,
-            sec: Math.floor(Date.now() / 1000) % 60
+            date: date.getDate(),
+            time: {
+                hour: date.getHours(),
+                min: date.getMinutes(),
+                sec: date.getSeconds(),
+            },
         }
     }
 
-    getClock() {
+    // clock 객체 가져오기
+    getClockObj() {
         this.setClock()
         return this.clock
     }
 
-    getSeconds(hour, min, sec) {
-        return Number(hour) * 60 * 60 + Number(min) * 60 + Number(sec)
-    }
-
     setTimer() {
         this.timer = setInterval(() => {
+            // 1초마다 clock 변경하고 event broadcast
             this.setClock()
             this.emit('@TIMER', this.clock)
         }, 1000)

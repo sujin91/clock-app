@@ -13,7 +13,7 @@ export const MESSAGE = {
     MIN_FORMAT: '60분을 넘길 수 없습니다',
     SEC_FORMAT: '60초를 넘길 수 없습니다',
     SUCCESS: '등록하였습니다.',
-    STORAGE_FAIL: 'localStorage를 사용할 수 없습니다.'
+    STORAGE_FAIL: 'localStorage를 사용할 수 없습니다.',
 }
 
 export const STATE = {
@@ -25,19 +25,21 @@ export const STATE = {
 export const COLOR = {
     RED: '#F00',
     GRAY: '#888',
-    BLACK: '#000'
+    BLACK: '#000',
 }
 
-// export const Key = {
-//     BACKSPACE: 'Backspace',
-//     ENTER: 'Enter',
-//     TAB: 'Tab',
-//     HOME: 'Home',
-//     END: 'End',
-//     ARROW_LEFT: 'ArrowLeft',
-//     ARROW_RIGHT: 'ArrowRight',
-//     DELETE: 'Delete'
-// }
+export const WHITELIST = [
+    'Control',
+    'Alt',
+    'Meta',
+    'ArrowLeft',
+    'ArrowRight',
+    'Enter',
+    'Tab',
+    'Home',
+    'End',
+    'Delete',
+]
 
 export const BTN_GET_TIME = '현재시간'
 export const BTN_ADD = '등록'

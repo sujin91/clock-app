@@ -1,6 +1,6 @@
 import View from './View.js'
-
 import { INIT_TIMESTAMP, BTN_DELETE } from '../Constants.js'
+import { getTimeStrObj } from '../utils/time.js'
 
 class WatchView extends View {
     constructor($target) {
@@ -29,65 +29,62 @@ class WatchView extends View {
         this.$recordList.addEventListener('click', this.onDeleteRecord)
     }
 
-    onReset = () => this.emit('@RESET') // broadcast the event '@RESET'
-    
+    onReset = () => this.emit('@RESET') // 초기화 버튼 클릭 broadcast
+
     onAddRecord = () => {
         //리스트가 생성되면 다시 이벤트 바인딩
-        this.$recordList.childElementCount === 0 && this.$recordList.addEventListener('click', this.onDeleteRecord)  
-        this.emit('@ADD', { time: this.$watch.innerHTML })
+        if (this.$recordList.childNodes.length === 0)
+            this.$recordList.addEventListener('click', this.onDeleteRecord)
+        this.emit('@ADD', { time: this.$watch.innerHTML }) // 기록 버튼 클릭 broadcast
     }
 
-    onDeleteRecord = e => {
+    onDeleteRecord = (e) => {
         //리스트가 없어 삭제버튼 클릭이벤트 언바인딩
-        this.$recordList.firstChild === null && this.destroy('click', this.$recordList, this.onDeleteRecord)
-        e.target.id === 'buttonDelete' && this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) })
+        if (this.$recordList.childNodes.length === 0)
+            this.off('click', this.$recordList, this.onDeleteRecord)
+        this.emit('@DELETE', { id: Number(e.toElement.parentNode.id) }) // 삭제 버튼 클릭 broadcast
     }
 
     // 스톱워치 시계 렌더
-    renderStopWatch(watchTime) {
-        this.hour = String(Math.floor(watchTime / 1000 / 60 / 60) % 60).padStart(2, "0")
-        this.min = String(Math.floor(watchTime / 1000 / 60) % 60).padStart(2, "0")
-        this.sec = String(Math.floor(watchTime / 1000) % 60).padStart(2, "0")
-        this.msec = String(Math.floor(watchTime) % 1000).padStart(3, "0")
+    renderStopWatch(elapsedTime) {
+        const time = this.convertTime(elapsedTime)
+        const { hour, min, sec, msec } = getTimeStrObj(time)
         
-        this.$watch.innerHTML = `${this.hour}:${this.min}:${this.sec}.${this.msec}`
+        this.$watch.innerHTML = `${hour}:${min}:${sec}.${msec}`
     }
 
-    // 탭이동으로 인한 스톱워치 마지막 기록값 렌더
-    renderLastWatch(records) {
-        // 기록이 있으면
-        if (records.length > 0) {
-            let lastRecord = records[records.length - 1]
-            this.$watch.innerHTML = `${lastRecord.time.hour}:${lastRecord.time.min}:${lastRecord.time.sec}.${lastRecord.time.msec}`
+    // 경과시간(unix time)을 convert
+    convertTime(elapsedTime) {
+        const time = {
+            hour: Math.floor(elapsedTime / 3600000) % 60,
+            min: Math.floor(elapsedTime / 6000) % 60,
+            sec: Math.floor(elapsedTime / 1000) % 60,
+            msec: Math.floor(elapsedTime) % 1000,
+        }
 
-            return
-        } 
-        
-        this.renderReset()
+        return time
     }
 
     // 스톱워치 기록 목록 렌더
     renderList(list) {
-        while (this.$recordList.firstChild) {
-            this.$recordList.removeChild(this.$recordList.firstChild)
-        }
+        this.clearChildElement(this.$recordList)
 
-        list.forEach(item => {
+        for (let [key, value] of list.entries()) {
             const $li = this.createElement('li')
-            $li.id = item.id
+            $li.id = key
 
             const $span = this.createElement('span')
-            $span.innerHTML = `${item.time.hour}:${item.time.min}:${item.time.sec}.${item.time.msec}`
+            $span.innerHTML = `${value.time.hour}:${value.time.min}:${value.time.sec}.${value.time.msec}`
 
             const $button = this.createElement('button', 'button_delete')
             $button.id = 'buttonDelete'
             $button.innerHTML = BTN_DELETE
-            
-            $li.append($span, $button)
-            this.$recordList.append($li)    
-        })
 
-        this.$recordCount.innerHTML = `총: ${list.length}` 
+            $li.append($span, $button)
+            this.$recordList.append($li)
+        }
+
+        this.$recordCount.innerHTML = `총: ${list.size}`
     }
 }
 

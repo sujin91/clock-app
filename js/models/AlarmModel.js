@@ -1,95 +1,103 @@
 import ClockModel from './ClockModel.js'
 
 import { MESSAGE, STATE } from '../Constants.js'
-import { Storage } from '../utils/Storage.js'
-import { FetchData } from '../utils/FetchData.js'
+import { storage } from '../utils/storage.js'
+import { fetchData } from '../utils/fetchData.js'
+import { refineData } from '../utils/refineData.js'
+import { calcSeconds, getTimeObj } from '../utils/time.js'
 
 class AlarmModel extends ClockModel {
     constructor() {
         super()
-        this.alarms = Storage.get('alarms')
+        this.alarms = new Map()
     }
 
-    // 샘플 데이터 Fetch
-    getFetchData = async (PATH) => {
-        this.alarms = await FetchData(PATH)
-        //fetch 못하면 데이터 없는 상태로 시작
-        this.setState(this.alarms ? this.alarms : [])
+    // 샘플 데이터 비동기 fetch
+    fetchSample = async (path) => {
+        const result = await fetchData(path)
+        // fetch 성공시 데이터 정제, 실패시 데이터 없는 상태로 시작
+        this.alarms = result ? refineData(result) : []
+
+        this.setState()
     }
 
     // 리스트 가져오기
-    list() {
+    getList() {
         return this.alarms
     }
 
     // 추가
     add(time) {
         const [hour, min, sec] = time.split(':')
+        const seconds = calcSeconds(hour, min, sec)
         const alarm = {
-            seconds: this.getSeconds(hour, min, sec),
-            time: {
-                date: this.getClock().date,
-                hour: hour,
-                min: min,
-                sec: sec,
-            },
+            date: this.getClockObj().date,
+            time: getTimeObj(hour, min, sec),
             state: STATE.PENDING,
         }
 
-        this.alarms.push(alarm)
-
-        // 시간별 오름차순 정렬 
-        this.alarms.sort((a, b) => a.seconds - b.seconds)
+        this.alarms.set(seconds, alarm)
+        // 키 값 오름차순 정렬
+        this.alarms = new Map(
+            [...this.alarms.entries()].sort((a, b) => a[0] - b[0])
+        )
         this._commit(this.alarms)
     }
 
     // '초'에 따른 State 변화
     setState() {
-        const currentTime = this.getClock()
-        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
+        const {
+            time: { hour, min, sec },
+            date,
+        } = this.getClockObj()
+        const currentSeconds = calcSeconds(hour, min, sec)
 
-        this.alarms.forEach( item => {
-            // 알람 state Change
-            if (item.seconds - currentSeconds <= 10 && item.seconds - currentSeconds > 0) item.state = STATE.ACTIVE
-            else if (item.seconds - currentSeconds < 0 ) item.state = STATE.EXPIRED
+        for (let [seconds, value] of this.alarms.entries()) {
+            const diffTime = seconds - currentSeconds
 
-            // 자정 Change
-            if (item.time.date !== currentTime.date) this.alarms = this.alarms.filter( item => item.time.date === currentTime.date)
-        })
+            // 알람 state change
+            if (diffTime <= 10 && diffTime >= 0) value.state = STATE.ACTIVE
+            else if (diffTime < 0) value.state = STATE.EXPIRED
+            else value.state = STATE.PENDING
+
+            // 자정 change
+            if (value.date < date) this.alarms.clear()
+        }
         this._commit(this.alarms)
     }
 
+    // 알람 등록시 에러 체크
     isError(inputTime) {
         const [hour, min, sec] = inputTime.split(':')
-        
-        const currentTime = this.getClock()
-        const currentSeconds = this.getSeconds(currentTime.hour, currentTime.min, currentTime.sec)
-        const inputSeconds = this.getSeconds(hour, min, sec)
+        const inputSeconds = calcSeconds(hour, min, sec) // input 받은시간
+        const { time } = this.getClockObj()
+        const currentSeconds = calcSeconds(time.hour, time.min, time.sec) // 현재시간
 
-        // 시간형식에 맞는지 확인
-        if (inputTime.split(':').some( item => item.length > 2) || inputTime.split(':').length > 3 || inputTime.length < 8) {
+        // 시간형식에 맞는지 확인(hh:mm:ss 정규식)
+        if (!/^[0-9]{2,2}:[0-9]{2,2}:[0-9]{2,2}$/g.test(inputTime))
             return MESSAGE.EMPTY
-        }
         // 과거 시간인지 확인
         if (inputSeconds - currentSeconds <= 0) return MESSAGE.PAST
         // 존재하는 알람인지 확인
-        if (this.alarms.some( item => item.seconds === inputSeconds )) return MESSAGE.EXIST
+        if (this.alarms.has(inputSeconds)) return MESSAGE.EXIST
 
         return false
     }
 
     // 리스트 요소 삭제
-    delete(seconds) {
-        this.alarms = this.alarms.filter( item => item.seconds !== Number(seconds))
+    delete(id) {
+        this.alarms.delete(id)
         this._commit(this.alarms)
     }
 
+    // storage 저장
     _commit(alarms) {
-        Storage.set('alarms', alarms)
+        storage.set('ALARMS', alarms)
     }
 
     setTimer() {
         this.timer = setInterval(() => {
+            // 1초마다 state 변경하고 event broadcast
             this.setState()
             this.emit('@TIMER', this.alarms)
         }, 1000)
